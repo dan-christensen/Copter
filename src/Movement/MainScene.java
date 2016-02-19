@@ -21,10 +21,11 @@ import java.util.Random;
  */
 public class MainScene extends Application {
 
-    int playerSpeed;
-    ImageView player;
-    Image copterSrc;
-    Rectangle barrier;
+    private int playerSpeed;
+    private ImageView player;
+    private Image copterSrc;
+    private Rectangle barrier;
+    private double barierLocation;
     private Scene scene;
     private double playerX;
     private double playerY;
@@ -35,6 +36,7 @@ public class MainScene extends Application {
         player = new ImageView();
         copterSrc = new Image(getClass().getResourceAsStream("../images/copter.png"));
         barrier = new Rectangle(20, 200);
+        barierLocation = 100;
     }
 
     public static void main(String[] args) {
@@ -77,6 +79,16 @@ public class MainScene extends Application {
             public void handle(long now) {
                 try {
                     playerMove(primaryStage);
+                    barrier.setLayoutX(barierLocation -= 10);
+                    System.out.println(barierLocation);
+                    if (barierLocation < 0) {
+                        barierLocation = scene.getWidth();
+                    }
+                    if (barrier.isHover()) {
+                        barrier.setFill(Color.CYAN);
+                    } else {
+                        barrier.setFill(Color.LIME);
+                    }
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
