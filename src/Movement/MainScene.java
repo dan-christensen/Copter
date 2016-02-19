@@ -10,6 +10,7 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 
 import java.util.Random;
@@ -23,6 +24,7 @@ public class MainScene extends Application {
     int playerSpeed;
     ImageView player;
     Image copterSrc;
+    Rectangle barrier;
     private Scene scene;
     private double playerX;
     private double playerY;
@@ -32,6 +34,7 @@ public class MainScene extends Application {
         rand = new Random();
         player = new ImageView();
         copterSrc = new Image(getClass().getResourceAsStream("../images/copter.png"));
+        barrier = new Rectangle(20, 200);
     }
 
     public static void main(String[] args) {
@@ -55,10 +58,15 @@ public class MainScene extends Application {
         player.setSmooth(true);
         player.setCache(true);
 
+
+        barrier.setLayoutX(100);
+        barrier.setLayoutY(100);
+        barrier.setFill(Color.LIME);
+
         // TODO barrier movement with layout
 
         scene.setFill(Color.BLACK);
-        layout.getChildren().addAll(player);
+        layout.getChildren().addAll(player, barrier);
         primaryStage.setTitle("Copter");
         primaryStage.getIcons().add(copterSrc);
         primaryStage.setScene(scene);
