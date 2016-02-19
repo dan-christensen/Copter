@@ -78,8 +78,6 @@ public class MainScene extends Application {
             @Override
             public void handle(long now) {
                 try {
-
-
                     playerMove(primaryStage);
                     barrier.setLayoutX(barierLocation -= 10);
                     System.out.println(barierLocation);
