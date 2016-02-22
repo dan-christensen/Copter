@@ -28,6 +28,7 @@ public class MainScene extends Application {
     private int nBarriers;
     private Barrier[] barriers;
     private double barrierLocation;
+    private Group layout;
     private Scene scene;
     private double playerX;
     private double playerY;
@@ -38,7 +39,9 @@ public class MainScene extends Application {
         player = new ImageView();
         copterSrc = new Image(getClass().getResourceAsStream("../images/copter.png"));
         barrier = new Rectangle(20, 200);
-        barrierLocation = 100;
+        layout = new Group();
+        scene = new Scene(layout, 800, 300);
+        barrierLocation = scene.getWidth();
         nBarriers = 10;
         barriers = new Barrier[nBarriers];
     }
@@ -49,8 +52,7 @@ public class MainScene extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        Group layout = new Group();
-        scene = new Scene(layout, 800, 300);
+
 
         playerX = 10;
         playerY = (scene.getHeight() / 2) - (copterSrc.getHeight());
@@ -64,19 +66,22 @@ public class MainScene extends Application {
         player.setSmooth(true);
         player.setCache(true);
 
-        barrier.setLayoutX(100);
+        barrier.setLayoutX(barrierLocation);
         barrier.setLayoutY(100);
         barrier.setFill(Color.LIME);
 
         for (int i = 0; i < barriers.length; i++) {
             barriers[i] = new Barrier(200, i + 100, 20, 200);
             barriers[i].setSpeed(10);
+            barriers[i].setColor(Color.LIME);
             layout.getChildren().add(barriers[i]);
+            System.out.println(barriers[i].toString());
         }
+
+        System.out.println(layout.getChildren().toString());
 
         scene.setFill(Color.BLACK);
         layout.getChildren().addAll(player, barrier);
-//        layout.getChildren().addAll(barriers);
         primaryStage.setTitle("Copter");
         primaryStage.getIcons().add(copterSrc);
         primaryStage.setScene(scene);
@@ -88,7 +93,7 @@ public class MainScene extends Application {
                 try {
                     playerMove(primaryStage);
                     barrier.setLayoutX(barrierLocation -= 10);
-                    System.out.println(barrierLocation);
+//                    System.out.println(barrierLocation);
                     if (barrierLocation < 0) {
                         barrierLocation = scene.getWidth();
                     }
@@ -145,9 +150,8 @@ public class MainScene extends Application {
                 if (player.getLayoutX() > scene.getWidth()) {
                     playerX = 0;
                 }
-                System.out.println("X: " + player.getLayoutX() + " Y: " + player.getLayoutY());
+//                System.out.println("X: " + player.getLayoutX() + " Y: " + player.getLayoutY());
             }
         });
-//        player.setTranslateY(playerSpeed++);
     }
 }

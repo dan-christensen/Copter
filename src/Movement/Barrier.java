@@ -1,5 +1,6 @@
 package Movement;
 
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
 /**
@@ -9,6 +10,7 @@ import javafx.scene.shape.Rectangle;
 public class Barrier extends Rectangle {
 
     private int speed;
+    private Color color;
 
     public Barrier() {
     }
@@ -17,11 +19,23 @@ public class Barrier extends Rectangle {
         super(x, y, width, height);
     }
 
+    public Color getColor() {
+        return color;
+    }
+
+    public void setColor(Color color) {
+        this.color = color;
+    }
+
     public int getSpeed() {
         return speed;
     }
 
     public void setSpeed(int speed) {
         this.speed = speed;
+    }
+
+    public String getLocation() {
+        return "x: " + super.getX() + " y: " + super.getY();
     }
 }
