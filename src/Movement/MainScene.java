@@ -25,7 +25,9 @@ public class MainScene extends Application {
     private ImageView player;
     private Image copterSrc;
     private Rectangle barrier;
-    private double barierLocation;
+    private int nBarriers;
+    private Barrier[] barriers;
+    private double barrierLocation;
     private Scene scene;
     private double playerX;
     private double playerY;
@@ -36,7 +38,9 @@ public class MainScene extends Application {
         player = new ImageView();
         copterSrc = new Image(getClass().getResourceAsStream("../images/copter.png"));
         barrier = new Rectangle(20, 200);
-        barierLocation = 100;
+        barrierLocation = 100;
+        nBarriers = 10;
+        barriers = new Barrier[nBarriers];
     }
 
     public static void main(String[] args) {
@@ -60,15 +64,19 @@ public class MainScene extends Application {
         player.setSmooth(true);
         player.setCache(true);
 
-
         barrier.setLayoutX(100);
         barrier.setLayoutY(100);
         barrier.setFill(Color.LIME);
 
-        // TODO barrier movement with layout
+        for (int i = 0; i < barriers.length; i++) {
+            barriers[i] = new Barrier(200, i + 100, 20, 200);
+            barriers[i].setSpeed(10);
+            layout.getChildren().add(barriers[i]);
+        }
 
         scene.setFill(Color.BLACK);
         layout.getChildren().addAll(player, barrier);
+//        layout.getChildren().addAll(barriers);
         primaryStage.setTitle("Copter");
         primaryStage.getIcons().add(copterSrc);
         primaryStage.setScene(scene);
@@ -79,10 +87,10 @@ public class MainScene extends Application {
             public void handle(long now) {
                 try {
                     playerMove(primaryStage);
-                    barrier.setLayoutX(barierLocation -= 10);
-                    System.out.println(barierLocation);
-                    if (barierLocation < 0) {
-                        barierLocation = scene.getWidth();
+                    barrier.setLayoutX(barrierLocation -= 10);
+                    System.out.println(barrierLocation);
+                    if (barrierLocation < 0) {
+                        barrierLocation = scene.getWidth();
                     }
                     if (barrier.isHover()) {
                         barrier.setFill(Color.CYAN);
