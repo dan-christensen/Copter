@@ -10,7 +10,6 @@ import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 
 import java.util.ArrayList;
@@ -73,13 +72,13 @@ public class MainScene extends Application {
                 x = scene.getWidth();
             }
             if (i > 0) {
-                x = barriers.get(i - 1).getLayoutX() + 800;
+                x = barriers.get(i - 1).getLayoutX() + 600;
             }
 //            barriers.get(i).setLayoutX(rand.nextInt((int) scene.getWidth()));
             barriers.get(i).setLayoutX(x);
             barriers.get(i).setLayoutY(rand.nextInt((int) scene.getHeight()));
             barriers.get(i).setWidth(20);
-            barriers.get(i).setHeight(200);
+            barriers.get(i).setHeight(rand.nextInt(100 - 50) + 50);
             barriers.get(i).setFill(Color.LIME);
             barriers.get(i).setSpeed(10);
             layout.getChildren().add(barriers.get(i));
