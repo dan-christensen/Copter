@@ -13,6 +13,8 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Random;
 
 /**
@@ -26,7 +28,7 @@ public class MainScene extends Application {
     private Image copterSrc;
     private Rectangle barrier;
     private int nBarriers;
-    private Barrier[] barriers;
+    private List<Barrier> barriers;
     private double barrierLocation;
     private Group layout;
     private Scene scene;
@@ -43,7 +45,7 @@ public class MainScene extends Application {
         scene = new Scene(layout, 800, 300);
         barrierLocation = scene.getWidth();
         nBarriers = 10;
-        barriers = new Barrier[nBarriers];
+        barriers = new ArrayList<>();
     }
 
     public static void main(String[] args) {
@@ -66,19 +68,17 @@ public class MainScene extends Application {
         player.setSmooth(true);
         player.setCache(true);
 
-        barrier.setLayoutX(barrierLocation);
-        barrier.setLayoutY(100);
-        barrier.setFill(Color.LIME);
-
-        for (int i = 0; i < barriers.length; i++) {
-            barriers[i] = new Barrier(200, i + 100, 20, 200);
-            barriers[i].setSpeed(10);
-            barriers[i].setColor(Color.LIME);
-            layout.getChildren().add(barriers[i]);
-            System.out.println(barriers[i].toString());
+        for (int i = 0; i < nBarriers; i++) {
+            barriers.add(new Barrier());
+            barriers.get(i).setLayoutX(rand.nextInt((int) scene.getWidth()));
+            barriers.get(i).setLayoutY(rand.nextInt((int) scene.getHeight()));
+            barriers.get(i).setWidth(20);
+            barriers.get(i).setHeight(200);
+            barriers.get(i).setFill(Color.LIME);
+            barriers.get(i).setSpeed(10);
+            layout.getChildren().add(barriers.get(i));
+            System.out.println(barriers.get(i).getLayoutY());
         }
-
-        System.out.println(layout.getChildren().toString());
 
         scene.setFill(Color.BLACK);
         layout.getChildren().addAll(player, barrier);
@@ -90,6 +90,13 @@ public class MainScene extends Application {
         new AnimationTimer() {
             @Override
             public void handle(long now) {
+                for (Barrier barrierList : barriers) {
+                    double location = barrierList.getLayoutX();
+                    if (barrierList.getLayoutX() < 0) {
+                        location = scene.getWidth();
+                    }
+                    barrierList.setLayoutX(location -= barrierList.getSpeed());
+                }
                 try {
                     playerMove(primaryStage);
                     barrier.setLayoutX(barrierLocation -= 10);
