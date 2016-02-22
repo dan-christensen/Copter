@@ -26,7 +26,6 @@ public class MainScene extends Application {
     private int playerSpeed;
     private ImageView player;
     private Image copterSrc;
-    private Rectangle barrier;
     private int nBarriers;
     private List<Barrier> barriers;
     private double barrierLocation;
@@ -40,11 +39,10 @@ public class MainScene extends Application {
         rand = new Random();
         player = new ImageView();
         copterSrc = new Image(getClass().getResourceAsStream("../images/copter.png"));
-        barrier = new Rectangle(20, 200);
         layout = new Group();
         scene = new Scene(layout, 800, 300);
         barrierLocation = scene.getWidth();
-        nBarriers = 10;
+        nBarriers = 100;
         barriers = new ArrayList<>();
     }
 
@@ -70,18 +68,25 @@ public class MainScene extends Application {
 
         for (int i = 0; i < nBarriers; i++) {
             barriers.add(new Barrier());
-            barriers.get(i).setLayoutX(rand.nextInt((int) scene.getWidth()));
+            double x = 0;
+            if (i == 0) {
+                x = scene.getWidth();
+            }
+            if (i > 0) {
+                x = barriers.get(i - 1).getLayoutX() + 800;
+            }
+//            barriers.get(i).setLayoutX(rand.nextInt((int) scene.getWidth()));
+            barriers.get(i).setLayoutX(x);
             barriers.get(i).setLayoutY(rand.nextInt((int) scene.getHeight()));
             barriers.get(i).setWidth(20);
             barriers.get(i).setHeight(200);
             barriers.get(i).setFill(Color.LIME);
             barriers.get(i).setSpeed(10);
             layout.getChildren().add(barriers.get(i));
-            System.out.println(barriers.get(i).getLayoutY());
         }
 
         scene.setFill(Color.BLACK);
-        layout.getChildren().addAll(player, barrier);
+        layout.getChildren().addAll(player);
         primaryStage.setTitle("Copter");
         primaryStage.getIcons().add(copterSrc);
         primaryStage.setScene(scene);
@@ -92,23 +97,16 @@ public class MainScene extends Application {
             public void handle(long now) {
                 for (Barrier barrierList : barriers) {
                     double location = barrierList.getLayoutX();
-                    if (barrierList.getLayoutX() < 0) {
-                        location = scene.getWidth();
-                    }
+//                    if (player.getBoundsInParent().intersects(barrierList.getBoundsInParent())) {
+//                        primaryStage.close();
+//                    }
+//                    if (barrierList.getLayoutX() < 0) {
+//                        location = scene.getWidth();
+//                    }
                     barrierList.setLayoutX(location -= barrierList.getSpeed());
                 }
                 try {
                     playerMove(primaryStage);
-                    barrier.setLayoutX(barrierLocation -= 10);
-//                    System.out.println(barrierLocation);
-                    if (barrierLocation < 0) {
-                        barrierLocation = scene.getWidth();
-                    }
-                    if (barrier.isHover()) {
-                        barrier.setFill(Color.CYAN);
-                    } else {
-                        barrier.setFill(Color.LIME);
-                    }
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
