@@ -40,12 +40,10 @@ public class AnimationTest extends Application {
 
         Timeline tl = new Timeline(60);
         tl.setCycleCount(Animation.INDEFINITE);
-        KeyFrame moveBall = new KeyFrame(Duration.millis(400),
+        KeyFrame moveBall = new KeyFrame(Duration.millis(50),
                 new EventHandler<ActionEvent>() {
 
                     public void handle(ActionEvent event) {
-                        scene.setOnKeyPressed(e -> ball.setCenterX(50));
-
                         double xMin = ball.getBoundsInParent().getMinX();
                         double yMin = ball.getBoundsInParent().getMinY();
                         double xMax = ball.getBoundsInParent().getMaxX();

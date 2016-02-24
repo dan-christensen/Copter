@@ -55,7 +55,7 @@ public class AnimationTest2 extends Application {
                                 new KeyValue(translate, -50)
                         ),
                         new KeyFrame(
-                                Duration.seconds(2),
+                                Duration.seconds(10),
                                 new KeyValue(translate, 250)
                         )
                 )
