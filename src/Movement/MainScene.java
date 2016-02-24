@@ -1,9 +1,6 @@
 package Movement;
 
 import javafx.animation.AnimationTimer;
-import javafx.animation.Interpolator;
-import javafx.animation.Timeline;
-import javafx.animation.TranslateTransition;
 import javafx.application.Application;
 import javafx.event.EventHandler;
 import javafx.scene.Group;
@@ -14,7 +11,6 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
-import javafx.util.Duration;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -37,7 +33,6 @@ public class MainScene extends Application {
     private double playerX;
     private double playerY;
     private Random rand;
-    private Timeline tl;
 
     public MainScene() {
         rand = new Random();
@@ -48,7 +43,6 @@ public class MainScene extends Application {
         barrierLocation = scene.getWidth();
         nBarriers = 100;
         barriers = new ArrayList<>();
-        tl = new Timeline(60);
     }
 
     public static void main(String[] args) {
@@ -59,7 +53,7 @@ public class MainScene extends Application {
     public void start(Stage primaryStage) throws Exception {
 
 
-        playerX = 75;
+        playerX = 10;
         playerY = (scene.getHeight() / 2) - (copterSrc.getHeight());
         playerSpeed = 10;
 
@@ -67,7 +61,6 @@ public class MainScene extends Application {
         player.setFitWidth(50);
         player.setLayoutX(playerX);
         player.setLayoutY(playerY);
-        player.setRotate(20);
         player.setPreserveRatio(true);
         player.setSmooth(true);
         player.setCache(true);
@@ -79,7 +72,7 @@ public class MainScene extends Application {
                 x = scene.getWidth();
             }
             if (i > 0) {
-                x = barriers.get(i - 1).getLayoutX() + 500;
+                x = barriers.get(i - 1).getLayoutX() + 600;
             }
 //            barriers.get(i).setLayoutX(rand.nextInt((int) scene.getWidth()));
             barriers.get(i).setLayoutX(x);
@@ -103,73 +96,39 @@ public class MainScene extends Application {
             public void handle(long now) {
                 for (Barrier barrierList : barriers) {
                     double location = barrierList.getLayoutX();
-                    if (player.getBoundsInParent().intersects(barrierList.getBoundsInParent())) {
-                        primaryStage.close();
-                    }
+//                    if (player.getBoundsInParent().intersects(barrierList.getBoundsInParent())) {
+//                        primaryStage.close();
+//                    }
 //                    if (barrierList.getLayoutX() < 0) {
 //                        location = scene.getWidth();
 //                    }
                     barrierList.setLayoutX(location -= barrierList.getSpeed());
                 }
-
-
-                scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
-                    @Override
-                    public void handle(KeyEvent event) {
-                        if (event.getCode() == KeyCode.SPACE) {
-                            TranslateTransition translation = new TranslateTransition(Duration.millis(250), player);
-                            translation.interpolatorProperty().set(Interpolator.SPLINE(.1, .1, .7, .7));
-                            translation.setByY(-50);
-                            translation.setAutoReverse(true);
-                            translation.setCycleCount(2);
-                            translation.play();
-                        }
-                    }
-                });
-
-                TranslateTransition translation = new TranslateTransition(Duration.millis(250), player);
-                translation.interpolatorProperty().set(Interpolator.SPLINE(.1, .1, .7, .7));
-                translation.setByY(50);
-                translation.setAutoReverse(true);
-                translation.setCycleCount(2);
-                translation.play();
-
-
-/*                try {
+                try {
                     playerMove(primaryStage);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
-                }*/
+                }
             }
         }.start();
     }
 
-/*    private void playerMove(Stage primaryStage) throws InterruptedException {
+    private void playerMove(Stage primaryStage) throws InterruptedException {
         scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent event) {
-//                if (event.getCode() == KeyCode.SPACE) {
-//                    TranslateTransition translation = new TranslateTransition(Duration.millis(250), player);
-//                    translation.interpolatorProperty().set(Interpolator.SPLINE(.1, .1, .7, .7));
-//                    translation.setByY(-50);
-//                    translation.setAutoReverse(true);
-//                    translation.setCycleCount(2);
-//                    translation.play();
-//                }
-
-
-*//*              playerY += playerSpeed;
                 if (event.getCode() == KeyCode.UP || event.getCode() == KeyCode.W) {
                     playerY -= playerSpeed;
                     player.setLayoutY(playerY);
                     player.setRotate(0);
                 }
                 if (event.getCode() == KeyCode.DOWN || event.getCode() == KeyCode.S) {
+                    playerY += playerSpeed;
                     player.setLayoutY(playerY);
                     player.setRotate(0);
-                }*//*
 
-*//*                if (event.getCode() == KeyCode.LEFT || event.getCode() == KeyCode.A) {
+                }
+                if (event.getCode() == KeyCode.LEFT || event.getCode() == KeyCode.A) {
                     playerX -= playerSpeed;
                     player.setLayoutX(playerX);
                     player.setRotate(340);
@@ -180,7 +139,7 @@ public class MainScene extends Application {
                     player.setLayoutX(playerX);
                     player.setRotate(20);
                     player.setScaleX(1);
-                }*//*
+                }
 
                 // TODO check bounds logic
                 if (player.getLayoutY() < 0) {
@@ -198,5 +157,5 @@ public class MainScene extends Application {
 //                System.out.println("X: " + player.getLayoutX() + " Y: " + player.getLayoutY());
             }
         });
-    }*/
+    }
 }
