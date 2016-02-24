@@ -10,7 +10,6 @@ import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-import javafx.scene.input.KeyCharacterCombination;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.paint.Color;
@@ -28,7 +27,7 @@ import java.util.Random;
 public class MainScene extends Application {
 
     private int playerSpeed;
-    private ImageView player;
+    private Player player;
     private Image copterSrc;
     private int nBarriers;
     private List<Barrier> barriers;
@@ -38,10 +37,11 @@ public class MainScene extends Application {
     private double playerX;
     private double playerY;
     private Random rand;
+    private Boolean isFalling = true;
 
     public MainScene() {
         rand = new Random();
-        player = new ImageView();
+        player = new Player();
         copterSrc = new Image(getClass().getResourceAsStream("../images/copter.png"));
         layout = new Group();
         scene = new Scene(layout, 800, 300);
@@ -58,17 +58,17 @@ public class MainScene extends Application {
     public void start(Stage primaryStage) throws Exception {
 
 
-        playerX = 10;
-        playerY = (scene.getHeight() / 2) - (copterSrc.getHeight());
+        playerX = 50;
+        playerY = (scene.getHeight() / 2) - ((copterSrc.getHeight() / 2));
         playerSpeed = 10;
 
-        player.setImage(copterSrc);
-        player.setFitWidth(50);
-        player.setLayoutX(playerX);
-        player.setLayoutY(playerY);
-        player.setPreserveRatio(true);
-        player.setSmooth(true);
-        player.setCache(true);
+        player.getSrc().setImage(copterSrc);
+        player.getSrc().setFitWidth(50);
+        player.getSrc().setLayoutX(playerX);
+        player.getSrc().setLayoutY(playerY);
+        player.getSrc().setPreserveRatio(true);
+        player.getSrc().setSmooth(true);
+        player.getSrc().setCache(true);
 
         for (int i = 0; i < nBarriers; i++) {
             barriers.add(new Barrier());
@@ -90,7 +90,7 @@ public class MainScene extends Application {
         }
 
         scene.setFill(Color.BLACK);
-        layout.getChildren().addAll(player);
+        layout.getChildren().addAll(player.getSrc());
         primaryStage.setTitle("Copter");
         primaryStage.getIcons().add(copterSrc);
         primaryStage.setScene(scene);
@@ -100,6 +100,10 @@ public class MainScene extends Application {
         new AnimationTimer() {
             @Override
             public void handle(long now) {
+                if (isFalling) {
+                    player.getSrc().setRotate(20);
+                    player.getSrc().setLayoutY(playerY += 5);
+                }
                 for (Barrier barrierList : barriers) {
                     double location = barrierList.getLayoutX();
 //                    if (player.getBoundsInParent().intersects(barrierList.getBoundsInParent())) {
@@ -124,50 +128,53 @@ public class MainScene extends Application {
             @Override
             public void handle(KeyEvent event) {
                 if (event.getCode() == KeyCode.SPACE) {
-                    Timeline tl = new Timeline();
-                    KeyValue ke1 = new KeyValue(player.layoutYProperty(), player.getLayoutY() - 50);
+                    isFalling = false;
+                    player.getSrc().setRotate(340);
+                    Timeline tl = new Timeline(60);
+                    KeyValue ke1 = new KeyValue(player.getSrc().layoutYProperty(), player.getSrc().getLayoutY() - 100);
                     KeyFrame kf1 = new KeyFrame(Duration.millis(250), ke1);
-                    tl.setCycleCount(2);
-                    tl.setAutoReverse(true);
+//                    tl.setCycleCount(2);
+//                    tl.setAutoReverse(true);
                     tl.getKeyFrames().add(kf1);
                     tl.play();
-                    playerY = player.getLayoutY();
+                    playerY = player.getSrc().getLayoutY();
+                    tl.setOnFinished(e -> isFalling = true);
                 }
                 if (event.getCode() == KeyCode.UP || event.getCode() == KeyCode.W) {
                     playerY -= playerSpeed;
-                    player.setLayoutY(playerY);
-                    player.setRotate(0);
+                    player.getSrc().setLayoutY(playerY);
+                    player.getSrc().setRotate(0);
                 }
                 if (event.getCode() == KeyCode.DOWN || event.getCode() == KeyCode.S) {
                     playerY += playerSpeed;
-                    player.setLayoutY(playerY);
-                    player.setRotate(0);
+                    player.getSrc().setLayoutY(playerY);
+                    player.getSrc().setRotate(0);
 
                 }
                 if (event.getCode() == KeyCode.LEFT || event.getCode() == KeyCode.A) {
                     playerX -= playerSpeed;
-                    player.setLayoutX(playerX);
-                    player.setRotate(340);
-                    player.setScaleX(-1);
+                    player.getSrc().setLayoutX(playerX);
+                    player.getSrc().setRotate(340);
+                    player.getSrc().setScaleX(-1);
                 }
                 if (event.getCode() == KeyCode.RIGHT || event.getCode() == KeyCode.D) {
                     playerX += playerSpeed;
-                    player.setLayoutX(playerX);
-                    player.setRotate(20);
-                    player.setScaleX(1);
+                    player.getSrc().setLayoutX(playerX);
+                    player.getSrc().setRotate(20);
+                    player.getSrc().setScaleX(1);
                 }
 
                 // TODO check bounds logic
-                if (player.getLayoutY() < 0) {
+                if (player.getSrc().getLayoutY() < 0) {
                     playerY = scene.getHeight();
                 }
-                if (player.getLayoutY() > scene.getHeight()) {
+                if (player.getSrc().getLayoutY() > scene.getHeight()) {
                     playerY = 0;
                 }
-                if (player.getLayoutX() < 0) {
+                if (player.getSrc().getLayoutX() < 0) {
                     playerX = scene.getWidth();
                 }
-                if (player.getLayoutX() > scene.getWidth()) {
+                if (player.getSrc().getLayoutX() > scene.getWidth()) {
                     playerX = 0;
                 }
 //                System.out.println("X: " + player.getLayoutX() + " Y: " + player.getLayoutY());
