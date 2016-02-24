@@ -1,9 +1,9 @@
-package Movement;
+package Testing.MainGameTest;
 
 import javafx.scene.image.ImageView;
 
 /**
- * Movement.Copter
+ * Testing.MainGameTest.Copter
  * Created by Dan on 2/24/2016.
  */
 public class Player {

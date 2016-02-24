@@ -1,7 +1,7 @@
-package MouseClickMove;
+package Testing.MouseClickMove;
 
 /**
- * MouseClickMove.Copter
+ * Testing.MouseClickMove.Copter
  * Created by Dan on 2/16/2016.
  */
 

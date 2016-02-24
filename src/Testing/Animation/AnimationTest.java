@@ -1,4 +1,4 @@
-package Animation;
+package Testing.Animation;
 
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
@@ -23,7 +23,7 @@ public class AnimationTest extends Application {
 
     @Override
     public void start(final Stage primaryStage) {
-        primaryStage.setTitle("Animation");
+        primaryStage.setTitle("Testing/Animation");
         Group root = new Group();
         Scene scene = new Scene(root, 400, 300, Color.WHITE);
 

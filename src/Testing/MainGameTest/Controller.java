@@ -1,4 +1,4 @@
-package Movement;
+package Testing.MainGameTest;
 
 import javafx.animation.AnimationTimer;
 import javafx.animation.KeyFrame;
@@ -9,7 +9,6 @@ import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.paint.Color;
@@ -21,10 +20,10 @@ import java.util.List;
 import java.util.Random;
 
 /**
- * Movement.Copter
+ * Testing.MainGameTest.Copter
  * Created by Dan on 2/12/2016.
  */
-public class MainScene extends Application {
+public class Controller extends Application {
 
     private int playerSpeed;
     private Player player;
@@ -39,7 +38,7 @@ public class MainScene extends Application {
     private Random rand;
     private Boolean isFalling = true;
 
-    public MainScene() {
+    public Controller() {
         rand = new Random();
         player = new Player();
         copterSrc = new Image(getClass().getResourceAsStream("../images/copter.png"));
@@ -50,11 +49,7 @@ public class MainScene extends Application {
         barriers = new ArrayList<>();
     }
 
-    public static void main(String[] args) {
-        launch(args);
-    }
 
-    @Override
     public void start(Stage primaryStage) throws Exception {
 
 
@@ -100,10 +95,10 @@ public class MainScene extends Application {
         new AnimationTimer() {
             @Override
             public void handle(long now) {
-                if (isFalling) {
-                    player.getSrc().setRotate(20);
-                    player.getSrc().setLayoutY(playerY += 5);
-                }
+//                if (isFalling) {
+//                    player.getSrc().setRotate(20);
+//                    player.getSrc().setLayoutY(playerY += 5);
+//                }
                 for (Barrier barrierList : barriers) {
                     double location = barrierList.getLayoutX();
 //                    if (player.getBoundsInParent().intersects(barrierList.getBoundsInParent())) {
@@ -121,6 +116,26 @@ public class MainScene extends Application {
                 }
             }
         }.start();
+    }
+
+    private void checkBounds(int x, int y) {
+        checkBounds((double) x, (double) y);
+    }
+
+    private void checkBounds(double x, double y) {
+        // TODO check bounds logic
+        if (player.getSrc().getLayoutY() < 0) {
+            playerY = scene.getHeight();
+        }
+        if (player.getSrc().getLayoutY() > scene.getHeight()) {
+            playerY = 0;
+        }
+        if (player.getSrc().getLayoutX() < 0) {
+            playerX = scene.getWidth();
+        }
+        if (player.getSrc().getLayoutX() > scene.getWidth()) {
+            playerX = 0;
+        }
     }
 
     private void playerMove(Stage primaryStage) throws InterruptedException {
@@ -163,20 +178,9 @@ public class MainScene extends Application {
                     player.getSrc().setRotate(20);
                     player.getSrc().setScaleX(1);
                 }
+                checkBounds(player.getSrc().getLayoutX(), player.getSrc().getLayoutY());
 
-                // TODO check bounds logic
-                if (player.getSrc().getLayoutY() < 0) {
-                    playerY = scene.getHeight();
-                }
-                if (player.getSrc().getLayoutY() > scene.getHeight()) {
-                    playerY = 0;
-                }
-                if (player.getSrc().getLayoutX() < 0) {
-                    playerX = scene.getWidth();
-                }
-                if (player.getSrc().getLayoutX() > scene.getWidth()) {
-                    playerX = 0;
-                }
+
 //                System.out.println("X: " + player.getLayoutX() + " Y: " + player.getLayoutY());
             }
         });

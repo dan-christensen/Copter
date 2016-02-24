@@ -1,10 +1,10 @@
-package Movement;
+package Testing.MainGameTest;
 
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
 /**
- * Movement.Copter
+ * Testing.MainGameTest.Copter
  * Created by Dan on 2/16/2016.
  */
 public class Barrier extends Rectangle {

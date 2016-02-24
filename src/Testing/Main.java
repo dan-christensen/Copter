@@ -1,20 +1,22 @@
-package PopUp;
+package Testing;
 
 import javafx.application.Application;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
-import javafx.scene.layout.VBox;
+import javafx.scene.layout.StackPane;
 import javafx.stage.Stage;
 
 /**
  * PACKAGE_NAME.Copter
  * Created by Dan on 2/11/2016.
  */
-public class PopUp extends Application {
+public class Main extends Application {
 
-    Scene scene;
     Button button;
-    VBox layout;
+    StackPane layout;
+    Scene scene;
 
     public static void main(String[] args) {
         launch(args);
@@ -22,19 +24,14 @@ public class PopUp extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        button = new Button("Open New Window");
-        button.setOnAction(e -> {
-            boolean result = ConfirmBox.display("Confirm?", "Test Popup");
-            if (result) {
-                System.out.println("Yes");
-            }else {
-                System.out.println("NO");
-            }
-        });
-        layout = new VBox(20);
-        layout.getChildren().add(button);
-        scene = new Scene(layout, 300, 250);
         primaryStage.setTitle("Title");
+        button = new Button("Button");
+        button.setOnAction(actionEvent -> System.out.println("Button Clicked"));
+
+        layout = new StackPane();
+        layout.getChildren().add(button);
+
+        scene = new Scene(layout, 300, 250);
         primaryStage.setScene(scene);
         primaryStage.show();
     }

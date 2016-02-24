@@ -1,4 +1,4 @@
-package Animation;
+package Testing.Animation;
 
 import javafx.animation.KeyFrame;
 import javafx.animation.KeyValue;
@@ -9,7 +9,6 @@ import javafx.beans.property.DoubleProperty;
 import javafx.beans.property.SimpleDoubleProperty;
 import javafx.scene.GroupBuilder;
 import javafx.scene.Parent;
-import javafx.scene.Scene;
 import javafx.scene.SceneBuilder;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
