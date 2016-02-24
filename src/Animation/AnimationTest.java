@@ -40,7 +40,7 @@ public class AnimationTest extends Application {
 
         Timeline tl = new Timeline(60);
         tl.setCycleCount(Animation.INDEFINITE);
-        KeyFrame moveBall = new KeyFrame(Duration.millis(1),
+        KeyFrame moveBall = new KeyFrame(Duration.millis(400),
                 new EventHandler<ActionEvent>() {
 
                     public void handle(ActionEvent event) {
