@@ -10,6 +10,7 @@ import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.input.KeyCharacterCombination;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.paint.Color;
@@ -122,7 +123,6 @@ public class MainScene extends Application {
         scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent event) {
-
                 if (event.getCode() == KeyCode.SPACE) {
                     Timeline tl = new Timeline();
                     KeyValue ke1 = new KeyValue(player.layoutYProperty(), player.getLayoutY() - 50);
@@ -131,6 +131,7 @@ public class MainScene extends Application {
                     tl.setAutoReverse(true);
                     tl.getKeyFrames().add(kf1);
                     tl.play();
+                    playerY = player.getLayoutY();
                 }
                 if (event.getCode() == KeyCode.UP || event.getCode() == KeyCode.W) {
                     playerY -= playerSpeed;
