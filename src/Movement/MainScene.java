@@ -1,6 +1,9 @@
 package Movement;
 
 import javafx.animation.AnimationTimer;
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
+import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.event.EventHandler;
 import javafx.scene.Group;
@@ -11,6 +14,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -91,6 +95,7 @@ public class MainScene extends Application {
         primaryStage.setScene(scene);
         primaryStage.setResizable(false);
         primaryStage.show();
+
         new AnimationTimer() {
             @Override
             public void handle(long now) {
@@ -117,6 +122,16 @@ public class MainScene extends Application {
         scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent event) {
+
+                if (event.getCode() == KeyCode.SPACE) {
+                    Timeline tl = new Timeline();
+                    KeyValue ke1 = new KeyValue(player.layoutYProperty(), player.getLayoutY() - 50);
+                    KeyFrame kf1 = new KeyFrame(Duration.millis(250), ke1);
+                    tl.setCycleCount(2);
+                    tl.setAutoReverse(true);
+                    tl.getKeyFrames().add(kf1);
+                    tl.play();
+                }
                 if (event.getCode() == KeyCode.UP || event.getCode() == KeyCode.W) {
                     playerY -= playerSpeed;
                     player.setLayoutY(playerY);
