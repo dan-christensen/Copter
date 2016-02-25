@@ -13,10 +13,10 @@ import javafx.stage.Stage;
  */
 public class Controller extends Application {
 
-    Group layout;
-    Scene scene;
-    Player player;
-    Player rectangle;
+    private Group layout;
+    private Scene scene;
+    private Player player;
+    private Player rectangle;
     private Image playerSrc = new Image(getClass().getResourceAsStream("../images/copter.png"));
 
     public Controller() {
@@ -26,6 +26,13 @@ public class Controller extends Application {
     }
 
     public void start(Stage primaryStage) throws Exception {
+        player.setSrc(new Image(getClass().getResourceAsStream("../images/copter.png")));
+        player.setX(10);
+        player.setY(10);
+        player.setWidth(10);
+        player.setHeight(10);
+        player.setSpeed(10);
+        layout.getChildren().add(player.getSrc());
 
         primaryStage.setTitle("Copter");
 //        primaryStage.getIcons().add(copterSrc);
