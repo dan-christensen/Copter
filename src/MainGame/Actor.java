@@ -50,4 +50,11 @@ public abstract class Actor {
     public void setSpeed(int speed) {
         this.speed = speed;
     }
+
+    public void setBounds(double x, double y, int width, int height) {
+        this.x = x;
+        this.y = y;
+        this.width = width;
+        this.height = height;
+    }
 }

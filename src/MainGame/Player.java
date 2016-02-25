@@ -8,14 +8,15 @@ import javafx.scene.image.ImageView;
  * Created by Dan on 2/24/2016.
  */
 public class Player extends Actor {
-    private ImageView src = new ImageView();
+    private ImageView src;
 
     public Player() {
+        src = new ImageView();
     }
 
-    public Player(ImageView src) {
-
-        this.src = src;
+    public Player(Image src) {
+        this.getSrc().setImage(src);
+        this.src = new ImageView();
     }
 
     public ImageView getSrc() {
@@ -28,7 +29,7 @@ public class Player extends Actor {
 
     @Override
     public double getX() {
-        return super.getX();
+        return this.getSrc().getLayoutX();
     }
 
     @Override
@@ -38,7 +39,7 @@ public class Player extends Actor {
 
     @Override
     public double getY() {
-        return super.getY();
+        return this.getSrc().getLayoutY();
     }
 
     @Override
@@ -48,7 +49,7 @@ public class Player extends Actor {
 
     @Override
     public int getWidth() {
-        return super.getWidth();
+        return (int) this.getSrc().getFitWidth();
     }
 
     @Override
@@ -63,6 +64,14 @@ public class Player extends Actor {
 
     @Override
     public int getHeight() {
-        return super.getHeight();
+        return (int) this.getSrc().getFitHeight();
+    }
+
+    @Override
+    public void setBounds(double x, double y, int width, int height) {
+        this.getSrc().setLayoutX(x);
+        this.getSrc().setLayoutY(y);
+        this.getSrc().setFitWidth(width);
+        this.getSrc().setFitHeight(height);
     }
 }

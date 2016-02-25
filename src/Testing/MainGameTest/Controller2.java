@@ -29,7 +29,7 @@ public class Controller2 extends Application {
     private Player2 player2;
     private Image copterSrc;
     private int nBarriers;
-    private List<Barrier> barriers;
+    private List<Barrier2> barriers;
     private double barrierLocation;
     private Group layout;
     private Scene scene;
@@ -49,7 +49,11 @@ public class Controller2 extends Application {
         barriers = new ArrayList<>();
     }
 
+    public static void main(String[] args) {
+        launch(args);
+    }
 
+    @Override
     public void start(Stage primaryStage) throws Exception {
 
 
@@ -66,7 +70,7 @@ public class Controller2 extends Application {
         player2.getSrc().setCache(true);
 
         for (int i = 0; i < nBarriers; i++) {
-            barriers.add(new Barrier());
+            barriers.add(new Barrier2());
             double x = 0;
             if (i == 0) {
                 x = scene.getWidth();
@@ -99,7 +103,7 @@ public class Controller2 extends Application {
 //                    player2.getSrc().setRotate(20);
 //                    player2.getSrc().setLayoutY(playerY += 5);
 //                }
-                for (Barrier barrierList : barriers) {
+                for (Barrier2 barrierList : barriers) {
                     double location = barrierList.getLayoutX();
 //                    if (player2.getBoundsInParent().intersects(barrierList.getBoundsInParent())) {
 //                        primaryStage.close();

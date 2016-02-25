@@ -7,15 +7,15 @@ import javafx.scene.shape.Rectangle;
  * Testing.MainGameTest.Copter
  * Created by Dan on 2/16/2016.
  */
-public class Barrier extends Rectangle {
+public class Barrier2 extends Rectangle {
 
     private int speed;
     private Color color;
 
-    public Barrier() {
+    public Barrier2() {
     }
 
-    public Barrier(double x, double y, double width, double height) {
+    public Barrier2(double x, double y, double width, double height) {
         super(x, y, width, height);
     }
 
