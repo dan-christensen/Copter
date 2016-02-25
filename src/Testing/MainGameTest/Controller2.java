@@ -23,10 +23,10 @@ import java.util.Random;
  * Testing.MainGameTest.Copter
  * Created by Dan on 2/12/2016.
  */
-public class Controller extends Application {
+public class Controller2 extends Application {
 
     private int playerSpeed;
-    private Player player;
+    private Player2 player2;
     private Image copterSrc;
     private int nBarriers;
     private List<Barrier> barriers;
@@ -38,9 +38,9 @@ public class Controller extends Application {
     private Random rand;
     private Boolean isFalling = true;
 
-    public Controller() {
+    public Controller2() {
         rand = new Random();
-        player = new Player();
+        player2 = new Player2();
         copterSrc = new Image(getClass().getResourceAsStream("../images/copter.png"));
         layout = new Group();
         scene = new Scene(layout, 800, 300);
@@ -57,13 +57,13 @@ public class Controller extends Application {
         playerY = (scene.getHeight() / 2) - ((copterSrc.getHeight() / 2));
         playerSpeed = 10;
 
-        player.getSrc().setImage(copterSrc);
-        player.getSrc().setFitWidth(50);
-        player.getSrc().setLayoutX(playerX);
-        player.getSrc().setLayoutY(playerY);
-        player.getSrc().setPreserveRatio(true);
-        player.getSrc().setSmooth(true);
-        player.getSrc().setCache(true);
+        player2.getSrc().setImage(copterSrc);
+        player2.getSrc().setFitWidth(50);
+        player2.getSrc().setLayoutX(playerX);
+        player2.getSrc().setLayoutY(playerY);
+        player2.getSrc().setPreserveRatio(true);
+        player2.getSrc().setSmooth(true);
+        player2.getSrc().setCache(true);
 
         for (int i = 0; i < nBarriers; i++) {
             barriers.add(new Barrier());
@@ -85,7 +85,7 @@ public class Controller extends Application {
         }
 
         scene.setFill(Color.BLACK);
-        layout.getChildren().addAll(player.getSrc());
+        layout.getChildren().addAll(player2.getSrc());
         primaryStage.setTitle("Copter");
         primaryStage.getIcons().add(copterSrc);
         primaryStage.setScene(scene);
@@ -96,12 +96,12 @@ public class Controller extends Application {
             @Override
             public void handle(long now) {
 //                if (isFalling) {
-//                    player.getSrc().setRotate(20);
-//                    player.getSrc().setLayoutY(playerY += 5);
+//                    player2.getSrc().setRotate(20);
+//                    player2.getSrc().setLayoutY(playerY += 5);
 //                }
                 for (Barrier barrierList : barriers) {
                     double location = barrierList.getLayoutX();
-//                    if (player.getBoundsInParent().intersects(barrierList.getBoundsInParent())) {
+//                    if (player2.getBoundsInParent().intersects(barrierList.getBoundsInParent())) {
 //                        primaryStage.close();
 //                    }
 //                    if (barrierList.getLayoutX() < 0) {
@@ -124,16 +124,16 @@ public class Controller extends Application {
 
     private void checkBounds(double x, double y) {
         // TODO check bounds logic
-        if (player.getSrc().getLayoutY() < 0) {
+        if (player2.getSrc().getLayoutY() < 0) {
             playerY = scene.getHeight();
         }
-        if (player.getSrc().getLayoutY() > scene.getHeight()) {
+        if (player2.getSrc().getLayoutY() > scene.getHeight()) {
             playerY = 0;
         }
-        if (player.getSrc().getLayoutX() < 0) {
+        if (player2.getSrc().getLayoutX() < 0) {
             playerX = scene.getWidth();
         }
-        if (player.getSrc().getLayoutX() > scene.getWidth()) {
+        if (player2.getSrc().getLayoutX() > scene.getWidth()) {
             playerX = 0;
         }
     }
@@ -144,44 +144,44 @@ public class Controller extends Application {
             public void handle(KeyEvent event) {
                 if (event.getCode() == KeyCode.SPACE) {
                     isFalling = false;
-                    player.getSrc().setRotate(340);
+                    player2.getSrc().setRotate(340);
                     Timeline tl = new Timeline(60);
-                    KeyValue ke1 = new KeyValue(player.getSrc().layoutYProperty(), player.getSrc().getLayoutY() - 100);
+                    KeyValue ke1 = new KeyValue(player2.getSrc().layoutYProperty(), player2.getSrc().getLayoutY() - 100);
                     KeyFrame kf1 = new KeyFrame(Duration.millis(250), ke1);
 //                    tl.setCycleCount(2);
 //                    tl.setAutoReverse(true);
                     tl.getKeyFrames().add(kf1);
                     tl.play();
-                    playerY = player.getSrc().getLayoutY();
+                    playerY = player2.getSrc().getLayoutY();
                     tl.setOnFinished(e -> isFalling = true);
                 }
                 if (event.getCode() == KeyCode.UP || event.getCode() == KeyCode.W) {
                     playerY -= playerSpeed;
-                    player.getSrc().setLayoutY(playerY);
-                    player.getSrc().setRotate(0);
+                    player2.getSrc().setLayoutY(playerY);
+                    player2.getSrc().setRotate(0);
                 }
                 if (event.getCode() == KeyCode.DOWN || event.getCode() == KeyCode.S) {
                     playerY += playerSpeed;
-                    player.getSrc().setLayoutY(playerY);
-                    player.getSrc().setRotate(0);
+                    player2.getSrc().setLayoutY(playerY);
+                    player2.getSrc().setRotate(0);
 
                 }
                 if (event.getCode() == KeyCode.LEFT || event.getCode() == KeyCode.A) {
                     playerX -= playerSpeed;
-                    player.getSrc().setLayoutX(playerX);
-                    player.getSrc().setRotate(340);
-                    player.getSrc().setScaleX(-1);
+                    player2.getSrc().setLayoutX(playerX);
+                    player2.getSrc().setRotate(340);
+                    player2.getSrc().setScaleX(-1);
                 }
                 if (event.getCode() == KeyCode.RIGHT || event.getCode() == KeyCode.D) {
                     playerX += playerSpeed;
-                    player.getSrc().setLayoutX(playerX);
-                    player.getSrc().setRotate(20);
-                    player.getSrc().setScaleX(1);
+                    player2.getSrc().setLayoutX(playerX);
+                    player2.getSrc().setRotate(20);
+                    player2.getSrc().setScaleX(1);
                 }
-                checkBounds(player.getSrc().getLayoutX(), player.getSrc().getLayoutY());
+                checkBounds(player2.getSrc().getLayoutX(), player2.getSrc().getLayoutY());
 
 
-//                System.out.println("X: " + player.getLayoutX() + " Y: " + player.getLayoutY());
+//                System.out.println("X: " + player2.getLayoutX() + " Y: " + player2.getLayoutY());
             }
         });
     }

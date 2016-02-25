@@ -6,7 +6,7 @@ import javafx.scene.image.ImageView;
  * Testing.MainGameTest.Copter
  * Created by Dan on 2/24/2016.
  */
-public class Player {
+public class Player2 {
     private ImageView src = new ImageView();
     private double x;
     private double y;
@@ -14,16 +14,16 @@ public class Player {
     private double height;
     private int speed;
 
-    public Player() {
+    public Player2() {
     }
 
-    public Player(ImageView src, double width, double height) {
+    public Player2(ImageView src, double width, double height) {
         this.src = src;
         this.width = width;
         this.height = height;
     }
 
-    public Player(ImageView src, double x, double y, double width, double height) {
+    public Player2(ImageView src, double x, double y, double width, double height) {
         this.src = src;
         this.x = x;
         this.y = y;

@@ -1,20 +1,20 @@
-package Testing.MainGameTest;
+package MainGame;
 
 import javafx.application.Application;
 import javafx.stage.Stage;
 
 /**
- * Testing.MainGameTest.Copter
+ * PACKAGE_NAME.Copter
  * Created by Dan on 2/24/2016.
  */
-public class Copter extends Application {
+public class MainGame extends Application {
     public static void main(String[] args) {
         launch(args);
     }
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        Controller2 controller = new Controller2();
+        Controller controller = new Controller();
         controller.start(primaryStage);
     }
 }
