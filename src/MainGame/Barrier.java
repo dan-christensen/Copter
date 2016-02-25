@@ -8,7 +8,9 @@ import javafx.scene.shape.Rectangle;
  * Created by Dan on 2/25/2016.
  */
 public class Barrier extends Actor {
-    Rectangle src;
+    private Rectangle src;
+    private double tempX;
+    private double tempY;
 
     public Barrier() {
         src = new Rectangle();
@@ -30,6 +32,7 @@ public class Barrier extends Actor {
     @Override
     public void setX(double x) {
         this.getSrc().setLayoutX(x);
+        tempX = this.getX();
     }
 
     @Override
@@ -40,6 +43,7 @@ public class Barrier extends Actor {
     @Override
     public void setY(double y) {
         this.getSrc().setLayoutY(y);
+        tempY = this.getY();
     }
 
     @Override
@@ -64,10 +68,26 @@ public class Barrier extends Actor {
 
     @Override
     public void setBounds(double x, double y, int width, int height) {
-        this.getSrc().setLayoutX(x);
-        this.getSrc().setLayoutY(y);
-        this.getSrc().setWidth(width);
-        this.getSrc().setHeight(height);
+        this.setX(x);
+        this.setY(y);
+        this.setWidth(width);
+        this.setHeight(height);
+    }
+
+    @Override
+    public void move(int xSpeed, int ySpeed) {
+        this.setX(tempX += xSpeed);
+        this.setY(tempY += ySpeed);
+    }
+
+    @Override
+    public void moveX(int xSpeed) {
+        this.setX(tempX += xSpeed);
+    }
+
+    @Override
+    public void moveY(int ySpeed) {
+        this.setY(tempY += ySpeed);
     }
 
     public void setFill(Color color) {

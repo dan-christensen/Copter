@@ -57,4 +57,16 @@ public abstract class Actor {
         this.width = width;
         this.height = height;
     }
+
+    public void move(int xSpeed, int ySpeed) {
+
+    }
+
+    public void moveX(int xSpeed) {
+
+    }
+
+    public void moveY(int ySpeed) {
+
+    }
 }

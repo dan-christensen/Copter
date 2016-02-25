@@ -15,8 +15,8 @@ public class Player extends Actor {
     }
 
     public Player(Image src) {
-        this.getSrc().setImage(src);
         this.src = new ImageView();
+        this.getSrc().setImage(src);
     }
 
     public ImageView getSrc() {
@@ -69,9 +69,9 @@ public class Player extends Actor {
 
     @Override
     public void setBounds(double x, double y, int width, int height) {
-        this.getSrc().setLayoutX(x);
-        this.getSrc().setLayoutY(y);
-        this.getSrc().setFitWidth(width);
-        this.getSrc().setFitHeight(height);
+        this.setX(x);
+        this.setY(y);
+        this.setWidth(width);
+        this.setHeight(height);
     }
 }
