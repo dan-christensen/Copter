@@ -32,7 +32,7 @@ public class Barrier extends Actor {
     @Override
     public void setX(double x) {
         this.getSrc().setLayoutX(x);
-        tempX = this.getX();
+        tempX = x;
     }
 
     @Override
@@ -43,7 +43,7 @@ public class Barrier extends Actor {
     @Override
     public void setY(double y) {
         this.getSrc().setLayoutY(y);
-        tempY = this.getY();
+        tempY = y;
     }
 
     @Override

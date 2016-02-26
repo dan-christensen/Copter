@@ -10,6 +10,8 @@ public abstract class Actor {
     private int width;
     private int height;
     private int speed;
+    private double tempX;
+    private double tempY;
 
     public double getX() {
         return x;
@@ -59,14 +61,15 @@ public abstract class Actor {
     }
 
     public void move(int xSpeed, int ySpeed) {
-
+        this.setX(tempX += xSpeed);
+        this.setY(tempY += ySpeed);
     }
 
     public void moveX(int xSpeed) {
-
+        this.setX(tempX += xSpeed);
     }
 
     public void moveY(int ySpeed) {
-
+        this.setY(tempY += ySpeed);
     }
 }
