@@ -127,7 +127,6 @@ public class Controller2 extends Application {
     }
 
     private void checkBounds(double x, double y) {
-        // TODO check bounds logic
         if (player2.getSrc().getLayoutY() < 0) {
             playerY = scene.getHeight();
         }

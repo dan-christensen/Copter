@@ -94,4 +94,8 @@ public class Player extends Actor {
     public void moveY(int ySpeed) {
         this.setY(tempY += ySpeed);
     }
+
+    public void setRotation(double degree) {
+        this.getSrc().setRotate(degree);
+    }
 }
