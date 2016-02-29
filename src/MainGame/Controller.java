@@ -34,6 +34,8 @@ public class Controller extends Application {
     private List<Barrier> barriers;
     private int nBarriers;
     private int barrierGap;
+    private List<Barrier> trail;
+
 
     public Controller() {
         rand = new Random();
@@ -46,6 +48,7 @@ public class Controller extends Application {
         nBarriers = 100;
         barrierGap = 300;
         playerSpeed = 5;
+        trail = new ArrayList<>();
     }
 
     public void start(Stage primaryStage) throws Exception {
@@ -97,8 +100,20 @@ public class Controller extends Application {
     }
 
     private void update(Stage primaryStage) {
+
+        int i = 0;
+        trail.add(i, new Barrier());
+        trail.get(i).setBounds(player.getX(), player.getY() + 5, 5, 3);
+        trail.get(i).setFill(Color.CYAN);
+        trail.get(i).setSpeed(-5);
+        layout.getChildren().add(trail.get(i).getSrc());
+        i++;
+
+        for (Barrier trails : trail) {
+            trails.moveX(trails.getSpeed());
+        }
+
         player.moveY(player.getSpeed());
-        System.out.println(barriers.get(10).getX());
         for (Barrier barrierList : barriers) {
             if (player.getSrc().getBoundsInParent().intersects(barrierList.getSrc().getBoundsInParent())) {
                 primaryStage.close();
@@ -113,12 +128,12 @@ public class Controller extends Application {
         scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent event) {
-                if (event.getCode().equals(KeyCode.DOWN)) {
+                if (event.getCode().equals(KeyCode.DOWN) || event.getCode().equals(KeyCode.S)) {
                     player.setSpeed(playerSpeed);
                     player.setRotation(10);
                     System.out.println(player.getY());
                 }
-                if (event.getCode().equals(KeyCode.UP)) {
+                if (event.getCode().equals(KeyCode.UP) || event.getCode().equals(KeyCode.W)) {
                     player.setSpeed(playerSpeed * (-1));
                     player.setRotation(30);
                     System.out.println(player.getY());
