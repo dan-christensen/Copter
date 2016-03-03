@@ -52,7 +52,7 @@ public class Controller extends Application {
         menuLayout.getChildren().add(start);
         start.setOnAction(e -> {
             primaryStage.setScene(sceneGame);
-            gameStart();
+            gameStart(primaryStage);
         });
 
         primaryStage.setTitle("Copter");
@@ -60,10 +60,9 @@ public class Controller extends Application {
         primaryStage.setScene(mainMenu);
         primaryStage.setResizable(false);
         primaryStage.show();
-        tick(primaryStage);
     }
 
-    private void gameStart() {
+    private void gameStart(Stage primaryStage) {
         player = new Player(new Image(getClass().getResourceAsStream("../images/copter.png")));
         double playerX = 50;
         double playerY = 100;
@@ -109,6 +108,7 @@ public class Controller extends Application {
         botRect.setBounds(0, 290, (int) sceneGame.getWidth() + 10, 10);
         botRect.setFill(Color.LIME);
         gameLayout.getChildren().addAll(topRect.getSrc(), botRect.getSrc());
+        tick(primaryStage);
     }
 
     private void gameStop() {
@@ -117,7 +117,7 @@ public class Controller extends Application {
             gameLayout.getChildren().remove(barrierList.getSrc());
         }
         for (Barrier trails : trail) {
-            gameLayout.getChildren().remove(trails);
+            gameLayout.getChildren().remove(trails.getSrc());
         }
     }
 
@@ -125,44 +125,56 @@ public class Controller extends Application {
         new AnimationTimer() {
             @Override
             public void handle(long now) {
-                update(primaryStage);
+                int i = 0;
+                trail.add(i, new Barrier());
+                trail.get(i).setBounds(player.getX(), player.getY() + 5, 10, 3);
+                trail.get(i).setFill(Color.WHITESMOKE);
+                trail.get(i).setSpeed(-10);
+                gameLayout.getChildren().add(trail.get(i).getSrc());
+                i++;
+
+                for (Barrier trails : trail) {
+                    if (trails.getY() < 0) {
+                        gameLayout.getChildren().remove(trails.getSrc());
+                        trails.setSpeed(0);
+                    }
+                    trails.moveX(trails.getSpeed());
+                }
+
+                player.moveY(player.getSpeed());
+
+
+                for (Barrier barrierList : barriers) {
+
+                    if (player.getSrc().getBoundsInParent().intersects(barrierList.getSrc().getBoundsInParent())) {
+                        playerCrash();
+                    }
+                    if (barrierList.getX() + barrierList.getWidth() < 0) {
+                        gameLayout.getChildren().remove(barrierList.getSrc());
+                        barrierList.setSpeed(0);
+                    }
+                }
+
+                if (player.getSrc().getBoundsInParent().intersects(topRect.getSrc().getBoundsInParent()) || player.getSrc().getBoundsInParent().intersects(botRect.getSrc().getBoundsInParent())) {
+                    playerCrash();
+
+                }
+
                 playerMove();
                 barrierMove();
             }
-        }.start();
-    }
 
-    private void update(Stage primaryStage) {
-
-        int i = 0;
-        trail.add(i, new Barrier());
-        trail.get(i).setBounds(player.getX(), player.getY() + 5, 10, 3);
-        trail.get(i).setFill(Color.WHITESMOKE);
-        trail.get(i).setSpeed(-10);
-        gameLayout.getChildren().add(trail.get(i).getSrc());
-        i++;
-
-        for (Barrier trails : trail) {
-            if (trails.getY() < 0) {
-                gameLayout.getChildren().remove(trails.getSrc());
-                trails.setSpeed(0);
-            }
-            trails.moveX(trails.getSpeed());
-        }
-
-        player.moveY(player.getSpeed());
-        for (Barrier barrierList : barriers) {
-
-            // Collision detection
-            if (player.getSrc().getBoundsInParent().intersects(barrierList.getSrc().getBoundsInParent()) || player.getSrc().getBoundsInParent().intersects(topRect.getSrc().getBoundsInParent()) || player.getSrc().getBoundsInParent().intersects(botRect.getSrc().getBoundsInParent())) {
+            private void playerCrash() {
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+                stop();
                 gameStop();
                 primaryStage.setScene(mainMenu);
             }
-            if (barrierList.getX() + barrierList.getWidth() < 0) {
-                gameLayout.getChildren().remove(barrierList.getSrc());
-                barrierList.setSpeed(0);
-            }
-        }
+        }.start();
     }
 
     private void playerMove() {
