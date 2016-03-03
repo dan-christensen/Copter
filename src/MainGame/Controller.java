@@ -35,9 +35,15 @@ public class Controller extends Application {
     private int playerSpeed;
 
     private List<Barrier> barriers;
+    private int nBarriers;
+    private int barrierGap;
+    private int barrierSpeed;
     Barrier topRect;
     Barrier botRect;
     private List<Barrier> trail;
+    private boolean noclip;
+
+    private int score = 0;
 
 
     public Controller() {
@@ -46,6 +52,10 @@ public class Controller extends Application {
         menuItems = new VBox(20);
         sceneGame = new Scene(gameLayout, 800, 300, Color.BLACK);
         mainMenu = new Scene(menuItems, 300, 300, Color.BLACK);
+        noclip = true;
+        barrierSpeed = -10;
+        nBarriers = 100;
+        barrierGap = 300;
     }
 
     public void start(Stage primaryStage) throws Exception {
@@ -72,8 +82,6 @@ public class Controller extends Application {
         double playerX = 50;
         double playerY = 100;
         barriers = new ArrayList<>();
-        int nBarriers = 100;
-        int barrierGap = 300;
         topRect = new Barrier();
         botRect = new Barrier();
         playerSpeed = 5;
@@ -81,7 +89,7 @@ public class Controller extends Application {
 
 
         player.setBounds(playerX, playerY, 50, 50);
-        player.setRotation(20);
+        player.setRotate(20);
         player.getSrc().setPreserveRatio(true);
         player.getSrc().setSmooth(true);
         player.getSrc().setCache(true);
@@ -102,7 +110,7 @@ public class Controller extends Application {
 
             barriers.get(i).setBounds(x, y, 20, rand.nextInt(100 - 50) + 50);
             barriers.get(i).setFill(Color.LIME);
-            barriers.get(i).setSpeed(-10);
+            barriers.get(i).setSpeed(barrierSpeed);
             gameLayout.getChildren().add(barriers.get(i).getSrc());
 
         }
@@ -148,25 +156,31 @@ public class Controller extends Application {
 
                 player.moveY(player.getSpeed());
 
+                if (!noclip) {
+                    for (Barrier barrierList : barriers) {
 
-                for (Barrier barrierList : barriers) {
-
-                    if (player.getSrc().getBoundsInParent().intersects(barrierList.getSrc().getBoundsInParent())) {
-                        playerCrash();
+                        if (player.getSrc().getBoundsInParent().intersects(barrierList.getSrc().getBoundsInParent())) {
+                            playerCrash();
+                        }
+                        if (barrierList.getX() + barrierList.getWidth() < 0) {
+                            gameLayout.getChildren().remove(barrierList.getSrc());
+                            barrierList.setSpeed(0);
+                        }
                     }
-                    if (barrierList.getX() + barrierList.getWidth() < 0) {
-                        gameLayout.getChildren().remove(barrierList.getSrc());
-                        barrierList.setSpeed(0);
+
+                    if (player.getSrc().getBoundsInParent().intersects(topRect.getSrc().getBoundsInParent()) || player.getSrc().getBoundsInParent().intersects(botRect.getSrc().getBoundsInParent())) {
+                        playerCrash();
+
                     }
                 }
 
-                if (player.getSrc().getBoundsInParent().intersects(topRect.getSrc().getBoundsInParent()) || player.getSrc().getBoundsInParent().intersects(botRect.getSrc().getBoundsInParent())) {
-                    playerCrash();
-
+                if (score > 500) {
+                    barrierSpeed *= 2;
                 }
 
                 playerMove();
                 barrierMove();
+                score(primaryStage);
             }
 
             private void playerCrash() {
@@ -188,15 +202,16 @@ public class Controller extends Application {
             public void handle(KeyEvent event) {
                 if (event.getCode().equals(KeyCode.DOWN) || event.getCode().equals(KeyCode.S)) {
                     player.setSpeed(playerSpeed);
-                    player.setRotation(10);
+                    player.setRotate(30);
                     System.out.println(player.getY());
                 }
                 if (event.getCode().equals(KeyCode.UP) || event.getCode().equals(KeyCode.W)) {
                     player.setSpeed(playerSpeed * (-1));
-                    player.setRotation(30);
+                    player.setRotate(10);
                     System.out.println(player.getY());
                 }
                 if (event.getCode() == KeyCode.SPACE) {
+                    player.setRotate(10);
                     player.setSpeed(-5);
                 }
             }
@@ -205,7 +220,7 @@ public class Controller extends Application {
             @Override
             public void handle(KeyEvent event) {
                 player.setSpeed(0);
-                player.setRotation(20);
+                player.setRotate(20);
                 if (event.getCode().equals(KeyCode.SPACE)) {
                     player.setSpeed(5);
                 }
@@ -217,5 +232,12 @@ public class Controller extends Application {
         for (Barrier barrierList : barriers) {
             barrierList.moveX(barrierList.getSpeed());
         }
+    }
+
+    private void score(Stage primaryStage) {
+        score++;
+        primaryStage.setTitle("Copter | " + score);
+        System.out.println(score);
+
     }
 }
