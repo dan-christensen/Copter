@@ -3,6 +3,7 @@ package MainGame;
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.event.EventHandler;
+import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -10,7 +11,9 @@ import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 import java.util.ArrayList;
@@ -27,7 +30,7 @@ public class Controller extends Application {
     Random rand;
 
     private Group gameLayout;
-    private StackPane menuLayout;
+    private VBox menuItems;
     private Scene sceneGame;
     private Scene mainMenu;
     private Player player;
@@ -42,18 +45,22 @@ public class Controller extends Application {
     public Controller() {
         rand = new Random();
         gameLayout = new Group();
-        menuLayout = new StackPane();
+        menuItems = new VBox(20);
         sceneGame = new Scene(gameLayout, 800, 300, Color.BLACK);
-        mainMenu = new Scene(menuLayout, 300, 300, Color.BLACK);
+        mainMenu = new Scene(menuItems, 300, 300, Color.BLACK);
     }
 
     public void start(Stage primaryStage) throws Exception {
-        Button start = new Button("Play");
-        menuLayout.getChildren().add(start);
+        Button start = new Button("Start");
+        Button quit = new Button("Exit");
+        menuItems.getChildren().addAll(start, quit);
+        menuItems.setStyle("-fx-background-color: black");
+        menuItems.setAlignment(Pos.CENTER);
         start.setOnAction(e -> {
             primaryStage.setScene(sceneGame);
             gameStart(primaryStage);
         });
+        quit.setOnAction(e -> primaryStage.close());
 
         primaryStage.setTitle("Copter");
         primaryStage.getIcons().add(new Image(getClass().getResourceAsStream("../images/copter.png")));
