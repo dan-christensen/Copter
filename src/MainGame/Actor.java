@@ -1,5 +1,7 @@
 package MainGame;
 
+import javafx.beans.property.IntegerProperty;
+
 /**
  * Testing.Copter
  * Created by Dan on 2/24/2016.

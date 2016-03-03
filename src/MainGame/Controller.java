@@ -10,10 +10,8 @@ import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
-import javafx.scene.layout.StackPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 import java.util.ArrayList;
@@ -198,6 +196,9 @@ public class Controller extends Application {
                     player.setRotation(30);
                     System.out.println(player.getY());
                 }
+                if (event.getCode() == KeyCode.SPACE) {
+                    player.setSpeed(-5);
+                }
             }
         });
         sceneGame.setOnKeyReleased(new EventHandler<KeyEvent>() {
@@ -205,6 +206,9 @@ public class Controller extends Application {
             public void handle(KeyEvent event) {
                 player.setSpeed(0);
                 player.setRotation(20);
+                if (event.getCode().equals(KeyCode.SPACE)) {
+                    player.setSpeed(5);
+                }
             }
         });
     }
