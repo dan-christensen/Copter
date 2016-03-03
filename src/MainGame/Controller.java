@@ -5,9 +5,11 @@ import javafx.application.Application;
 import javafx.event.EventHandler;
 import javafx.scene.Group;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.scene.layout.StackPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
@@ -24,68 +26,99 @@ public class Controller extends Application {
 
     Random rand;
 
-    private Group layout;
-    private Scene scene;
+    private Group gameLayout;
+    private StackPane menuLayout;
+    private Scene sceneGame;
+    private Scene mainMenu;
     private Player player;
     private int playerSpeed;
-    private double playerX;
-    private double playerY;
 
     private List<Barrier> barriers;
-    private int nBarriers;
-    private int barrierGap;
+    Barrier topRect;
+    Barrier botRect;
     private List<Barrier> trail;
 
 
     public Controller() {
         rand = new Random();
-        layout = new Group();
-        scene = new Scene(layout, 800, 300, Color.BLACK);
-        player = new Player(new Image(getClass().getResourceAsStream("../images/copter.png")));
-        playerX = 50;
-        playerY = 100;
-        barriers = new ArrayList<>();
-        nBarriers = 100;
-        barrierGap = 300;
-        playerSpeed = 5;
-        trail = new ArrayList<>();
+        gameLayout = new Group();
+        menuLayout = new StackPane();
+        sceneGame = new Scene(gameLayout, 800, 300, Color.BLACK);
+        mainMenu = new Scene(menuLayout, 300, 300, Color.BLACK);
     }
 
     public void start(Stage primaryStage) throws Exception {
+        Button start = new Button("Play");
+        menuLayout.getChildren().add(start);
+        start.setOnAction(e -> {
+            primaryStage.setScene(sceneGame);
+            gameStart();
+        });
+
+        primaryStage.setTitle("Copter");
+        primaryStage.getIcons().add(new Image(getClass().getResourceAsStream("../images/copter.png")));
+        primaryStage.setScene(mainMenu);
+        primaryStage.setResizable(false);
+        primaryStage.show();
+        tick(primaryStage);
+    }
+
+    private void gameStart() {
+        player = new Player(new Image(getClass().getResourceAsStream("../images/copter.png")));
+        double playerX = 50;
+        double playerY = 100;
+        barriers = new ArrayList<>();
+        int nBarriers = 100;
+        int barrierGap = 300;
+        topRect = new Barrier();
+        botRect = new Barrier();
+        playerSpeed = 5;
+        trail = new ArrayList<>();
+
+
         player.setBounds(playerX, playerY, 50, 50);
         player.setRotation(20);
         player.getSrc().setPreserveRatio(true);
         player.getSrc().setSmooth(true);
         player.getSrc().setCache(true);
-        layout.getChildren().add(player.getSrc());
+        gameLayout.getChildren().add(player.getSrc());
 
 
         for (int i = 0; i < nBarriers; i++) {
             barriers.add(new Barrier());
             double x = 0;
             if (i == 0) {
-                x = scene.getWidth();
+                x = sceneGame.getWidth();
             }
             if (i > 0) {
                 x = barriers.get(i - 1).getX() + barrierGap;
             }
 
-            double y = rand.nextInt(((int) scene.getHeight() - 100) - 10) + 10;
+            double y = rand.nextInt(((int) sceneGame.getHeight() - 100) - 10) + 10;
 
             barriers.get(i).setBounds(x, y, 20, rand.nextInt(100 - 50) + 50);
             barriers.get(i).setFill(Color.LIME);
             barriers.get(i).setSpeed(-10);
-            layout.getChildren().add(barriers.get(i).getSrc());
+            gameLayout.getChildren().add(barriers.get(i).getSrc());
 
         }
 
-        primaryStage.setTitle("Copter");
-        primaryStage.getIcons().add(player.getSrc().getImage());
-        primaryStage.setScene(scene);
-        primaryStage.setResizable(false);
-        primaryStage.show();
-        System.out.println(player.getY());
-        tick(primaryStage);
+        topRect.setBounds(0, 0, (int) sceneGame.getWidth() + 10, 10);
+        topRect.setFill(Color.LIME);
+
+        botRect.setBounds(0, 290, (int) sceneGame.getWidth() + 10, 10);
+        botRect.setFill(Color.LIME);
+        gameLayout.getChildren().addAll(topRect.getSrc(), botRect.getSrc());
+    }
+
+    private void gameStop() {
+        gameLayout.getChildren().removeAll(player.getSrc(), topRect.getSrc(), botRect.getSrc());
+        for (Barrier barrierList : barriers) {
+            gameLayout.getChildren().remove(barrierList.getSrc());
+        }
+        for (Barrier trails : trail) {
+            gameLayout.getChildren().remove(trails);
+        }
     }
 
     public void tick(Stage primaryStage) {
@@ -103,29 +136,37 @@ public class Controller extends Application {
 
         int i = 0;
         trail.add(i, new Barrier());
-        trail.get(i).setBounds(player.getX(), player.getY() + 5, 5, 3);
-        trail.get(i).setFill(Color.CYAN);
-        trail.get(i).setSpeed(-5);
-        layout.getChildren().add(trail.get(i).getSrc());
+        trail.get(i).setBounds(player.getX(), player.getY() + 5, 10, 3);
+        trail.get(i).setFill(Color.WHITESMOKE);
+        trail.get(i).setSpeed(-10);
+        gameLayout.getChildren().add(trail.get(i).getSrc());
         i++;
 
         for (Barrier trails : trail) {
+            if (trails.getY() < 0) {
+                gameLayout.getChildren().remove(trails.getSrc());
+                trails.setSpeed(0);
+            }
             trails.moveX(trails.getSpeed());
         }
 
         player.moveY(player.getSpeed());
         for (Barrier barrierList : barriers) {
-            if (player.getSrc().getBoundsInParent().intersects(barrierList.getSrc().getBoundsInParent())) {
-                primaryStage.close();
+
+            // Collision detection
+            if (player.getSrc().getBoundsInParent().intersects(barrierList.getSrc().getBoundsInParent()) || player.getSrc().getBoundsInParent().intersects(topRect.getSrc().getBoundsInParent()) || player.getSrc().getBoundsInParent().intersects(botRect.getSrc().getBoundsInParent())) {
+                gameStop();
+                primaryStage.setScene(mainMenu);
             }
             if (barrierList.getX() + barrierList.getWidth() < 0) {
+                gameLayout.getChildren().remove(barrierList.getSrc());
                 barrierList.setSpeed(0);
             }
         }
     }
 
     private void playerMove() {
-        scene.setOnKeyPressed(new EventHandler<KeyEvent>() {
+        sceneGame.setOnKeyPressed(new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent event) {
                 if (event.getCode().equals(KeyCode.DOWN) || event.getCode().equals(KeyCode.S)) {
@@ -140,7 +181,7 @@ public class Controller extends Application {
                 }
             }
         });
-        scene.setOnKeyReleased(new EventHandler<KeyEvent>() {
+        sceneGame.setOnKeyReleased(new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent event) {
                 player.setSpeed(0);
