@@ -12,6 +12,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 
 import java.util.ArrayList;
@@ -23,6 +24,8 @@ import java.util.Random;
  * Created by Dan on 2/24/2016.
  */
 
+// TODO reset barriers after game end, add explosion, make player and barrier all actors.
+
 public class Controller extends Application {
 
     Random rand;
@@ -31,30 +34,31 @@ public class Controller extends Application {
     private VBox menuItems;
     private Scene sceneGame;
     private Scene mainMenu;
-    private Player player;
+    private Actor player;
     private int playerSpeed;
 
-    private List<Barrier> barriers;
+    private List<Actor> barriers;
     private int nBarriers;
     private int barrierGap;
     private int barrierSpeed;
-    Barrier topRect;
-    Barrier botRect;
-    private List<Barrier> trail;
+    Actor topRect;
+    Actor botRect;
+    private List<Actor> trail;
     private boolean noclip;
 
+    int tempScore = 0;
     private int score = 0;
 
 
     public Controller() {
+        noclip = false;
         rand = new Random();
         gameLayout = new Group();
         menuItems = new VBox(20);
         sceneGame = new Scene(gameLayout, 800, 300, Color.BLACK);
         mainMenu = new Scene(menuItems, 300, 300, Color.BLACK);
-        noclip = true;
         barrierSpeed = -10;
-        nBarriers = 100;
+        nBarriers = 2;
         barrierGap = 300;
     }
 
@@ -78,26 +82,28 @@ public class Controller extends Application {
     }
 
     private void gameStart(Stage primaryStage) {
-        player = new Player(new Image(getClass().getResourceAsStream("../images/copter.png")));
+        player = new Actor();
         double playerX = 50;
         double playerY = 100;
         barriers = new ArrayList<>();
-        topRect = new Barrier();
-        botRect = new Barrier();
+        topRect = new Actor() {
+        };
+        botRect = new Actor() {
+        };
         playerSpeed = 5;
         trail = new ArrayList<>();
 
-
+        player.setSrc(new Rectangle());
         player.setBounds(playerX, playerY, 50, 50);
+        player.setImageSrc(new Image(getClass().getResourceAsStream("../images/copter.png")));
         player.setRotate(20);
-        player.getSrc().setPreserveRatio(true);
-        player.getSrc().setSmooth(true);
-        player.getSrc().setCache(true);
-        gameLayout.getChildren().add(player.getSrc());
+        gameLayout.getChildren().add(player.getImageSrc());
 
 
         for (int i = 0; i < nBarriers; i++) {
-            barriers.add(new Barrier());
+            barriers.add(new Actor() {
+            });
+            barriers.get(i).setSrc(new Rectangle());
             double x = 0;
             if (i == 0) {
                 x = sceneGame.getWidth();
@@ -115,23 +121,27 @@ public class Controller extends Application {
 
         }
 
+        topRect.setSrc(new Rectangle());
         topRect.setBounds(0, 0, (int) sceneGame.getWidth() + 10, 10);
         topRect.setFill(Color.LIME);
 
+        botRect.setSrc(new Rectangle());
         botRect.setBounds(0, 290, (int) sceneGame.getWidth() + 10, 10);
         botRect.setFill(Color.LIME);
         gameLayout.getChildren().addAll(topRect.getSrc(), botRect.getSrc());
         tick(primaryStage);
     }
 
-    private void gameStop() {
+    private void gameStop(Stage primaryStage) {
         gameLayout.getChildren().removeAll(player.getSrc(), topRect.getSrc(), botRect.getSrc());
-        for (Barrier barrierList : barriers) {
+        for (Actor barrierList : barriers) {
             gameLayout.getChildren().remove(barrierList.getSrc());
         }
-        for (Barrier trails : trail) {
+        for (Actor trails : trail) {
             gameLayout.getChildren().remove(trails.getSrc());
         }
+        score = 0;
+        primaryStage.setScene(mainMenu);
     }
 
     public void tick(Stage primaryStage) {
@@ -139,14 +149,15 @@ public class Controller extends Application {
             @Override
             public void handle(long now) {
                 int i = 0;
-                trail.add(i, new Barrier());
+                trail.add(i, new Actor());
+                trail.get(i).setSrc(new Rectangle());
                 trail.get(i).setBounds(player.getX(), player.getY() + 5, 10, 3);
                 trail.get(i).setFill(Color.WHITESMOKE);
                 trail.get(i).setSpeed(-10);
                 gameLayout.getChildren().add(trail.get(i).getSrc());
                 i++;
 
-                for (Barrier trails : trail) {
+                for (Actor trails : trail) {
                     if (trails.getY() < 0) {
                         gameLayout.getChildren().remove(trails.getSrc());
                         trails.setSpeed(0);
@@ -157,9 +168,9 @@ public class Controller extends Application {
                 player.moveY(player.getSpeed());
 
                 if (!noclip) {
-                    for (Barrier barrierList : barriers) {
+                    for (Actor barrierList : barriers) {
 
-                        if (player.getSrc().getBoundsInParent().intersects(barrierList.getSrc().getBoundsInParent())) {
+                        if (player.getImageSrc().getBoundsInParent().intersects(barrierList.getSrc().getBoundsInParent())) {
                             playerCrash();
                         }
                         if (barrierList.getX() + barrierList.getWidth() < 0) {
@@ -168,14 +179,10 @@ public class Controller extends Application {
                         }
                     }
 
-                    if (player.getSrc().getBoundsInParent().intersects(topRect.getSrc().getBoundsInParent()) || player.getSrc().getBoundsInParent().intersects(botRect.getSrc().getBoundsInParent())) {
+                    if (player.getImageSrc().getBoundsInParent().intersects(topRect.getSrc().getBoundsInParent()) || player.getImageSrc().getBoundsInParent().intersects(botRect.getSrc().getBoundsInParent())) {
                         playerCrash();
 
                     }
-                }
-
-                if (score > 500) {
-                    barrierSpeed *= 2;
                 }
 
                 playerMove();
@@ -190,8 +197,7 @@ public class Controller extends Application {
                     e.printStackTrace();
                 }
                 stop();
-                gameStop();
-                primaryStage.setScene(mainMenu);
+                gameStop(primaryStage);
             }
         }.start();
     }
@@ -229,14 +235,17 @@ public class Controller extends Application {
     }
 
     private void barrierMove() {
-        for (Barrier barrierList : barriers) {
+        for (Actor barrierList : barriers) {
             barrierList.moveX(barrierList.getSpeed());
         }
     }
 
     private void score(Stage primaryStage) {
-        score++;
         primaryStage.setTitle("Copter | " + score);
+        if (tempScore % 10 == 0) {
+            score++;
+        }
+        tempScore++;
         System.out.println(score);
 
     }

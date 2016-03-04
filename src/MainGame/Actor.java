@@ -1,50 +1,66 @@
 package MainGame;
 
-import javafx.beans.property.IntegerProperty;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.paint.Color;
+import javafx.scene.shape.Rectangle;
 
 /**
  * Testing.Copter
  * Created by Dan on 2/24/2016.
  */
-public abstract class Actor {
+public class Actor {
+    private Rectangle src;
     private double x;
     private double y;
-    private int width;
-    private int height;
+    private double width;
+    private double height;
     private int speed;
     private double tempX;
+    private ImageView imageSrc;
+
     private double tempY;
 
+    public Rectangle getSrc() {
+        return src;
+    }
+
+    public void setSrc(Rectangle src) {
+        this.src = src;
+    }
+
     public double getX() {
-        return x;
+        return this.getSrc().getLayoutX();
     }
 
     public void setX(double x) {
-        this.x = x;
+        this.getSrc().setLayoutX(x);
+        tempX = x;
     }
 
     public double getY() {
-        return y;
+        return this.getSrc().getLayoutY();
     }
 
     public void setY(double y) {
-        this.y = y;
+        this.getSrc().setLayoutY(y);
+        tempY = y;
     }
 
-    public int getWidth() {
-        return width;
+    public double getWidth() {
+        return this.getSrc().getWidth();
     }
 
-    public void setWidth(int width) {
-        this.width = width;
+    public void setWidth(double width) {
+        this.getSrc().setWidth(width);
     }
 
-    public int getHeight() {
-        return height;
+    public double getHeight() {
+        return this.getSrc().getHeight();
     }
 
-    public void setHeight(int height) {
-        this.height = height;
+    public void setHeight(double height) {
+        this.getSrc().setHeight(height);
     }
 
     public int getSpeed() {
@@ -55,11 +71,15 @@ public abstract class Actor {
         this.speed = speed;
     }
 
-    public void setBounds(double x, double y, int width, int height) {
-        this.x = x;
-        this.y = y;
-        this.width = width;
-        this.height = height;
+    public void setFill(Color color) {
+        this.getSrc().setFill(color);
+    }
+
+    public void setBounds(double x, double y, double width, double height) {
+        this.setX(x);
+        this.setY(y);
+        this.setWidth(width);
+        this.setHeight(height);
     }
 
     public void move(int xSpeed, int ySpeed) {
@@ -73,5 +93,25 @@ public abstract class Actor {
 
     public void moveY(int ySpeed) {
         this.setY(tempY += ySpeed);
+    }
+
+    public ImageView getImageSrc() {
+        return imageSrc;
+    }
+
+    public void setImageSrc(Image imageSrc) {
+        this.imageSrc = new ImageView();
+        this.imageSrc.setImage(imageSrc);
+        this.getImageSrc().setLayoutX(this.getX());
+        this.getImageSrc().setLayoutY(this.getY());
+        this.getImageSrc().setFitWidth(this.getWidth());
+        this.getImageSrc().setFitHeight(this.getHeight());
+        this.getImageSrc().setPreserveRatio(true);
+        this.getImageSrc().setSmooth(true);
+        this.getImageSrc().setCache(true);
+    }
+
+    public void setRotate(double degree) {
+        this.getImageSrc().setRotate(degree);
     }
 }
