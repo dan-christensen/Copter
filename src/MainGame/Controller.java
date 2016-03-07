@@ -24,7 +24,7 @@ import java.util.Random;
  * Created by Dan on 2/24/2016.
  */
 
-// TODO reset barriers after game end, add explosion, make player and barrier all actors.
+// TODO reset barriers after game end, add explosion, remove trail when off screen, move the image when the player position is moved.
 
 public class Controller extends Application {
 
@@ -58,7 +58,7 @@ public class Controller extends Application {
         sceneGame = new Scene(gameLayout, 800, 300, Color.BLACK);
         mainMenu = new Scene(menuItems, 300, 300, Color.BLACK);
         barrierSpeed = -10;
-        nBarriers = 2;
+        nBarriers = 200;
         barrierGap = 300;
     }
 
@@ -86,40 +86,10 @@ public class Controller extends Application {
         double playerX = 50;
         double playerY = 100;
         barriers = new ArrayList<>();
-        topRect = new Actor() {
-        };
-        botRect = new Actor() {
-        };
+        topRect = new Actor();
+        botRect = new Actor();
         playerSpeed = 5;
         trail = new ArrayList<>();
-
-        player.setSrc(new Rectangle());
-        player.setBounds(playerX, playerY, 50, 50);
-        player.setImageSrc(new Image(getClass().getResourceAsStream("../images/copter.png")));
-        player.setRotate(20);
-        gameLayout.getChildren().add(player.getImageSrc());
-
-
-        for (int i = 0; i < nBarriers; i++) {
-            barriers.add(new Actor() {
-            });
-            barriers.get(i).setSrc(new Rectangle());
-            double x = 0;
-            if (i == 0) {
-                x = sceneGame.getWidth();
-            }
-            if (i > 0) {
-                x = barriers.get(i - 1).getX() + barrierGap;
-            }
-
-            double y = rand.nextInt(((int) sceneGame.getHeight() - 100) - 10) + 10;
-
-            barriers.get(i).setBounds(x, y, 20, rand.nextInt(100 - 50) + 50);
-            barriers.get(i).setFill(Color.LIME);
-            barriers.get(i).setSpeed(barrierSpeed);
-            gameLayout.getChildren().add(barriers.get(i).getSrc());
-
-        }
 
         topRect.setSrc(new Rectangle());
         topRect.setBounds(0, 0, (int) sceneGame.getWidth() + 10, 10);
@@ -129,11 +99,43 @@ public class Controller extends Application {
         botRect.setBounds(0, 290, (int) sceneGame.getWidth() + 10, 10);
         botRect.setFill(Color.LIME);
         gameLayout.getChildren().addAll(topRect.getSrc(), botRect.getSrc());
+
+        player.setSrc(new Rectangle());
+//        player.setBounds(playerX, playerY, 50, 50);
+        player.setImageSrc(new Image(getClass().getResourceAsStream("../images/copter.png")));
+        player.setImageX(playerX);
+        player.setImageY(playerY);
+        player.setImageWidth(50);
+        player.setImageWidth(50);
+        player.setSpeed(playerSpeed);
+        player.setRotate(20);
+        gameLayout.getChildren().add(player.getImageSrc());
+
+//        for (int i = 0; i < nBarriers; i++) {
+//            barriers.add(new Actor());
+//            barriers.get(i).setSrc(new Rectangle());
+//            double x = 0;
+//            if (i == 0) {
+//                x = sceneGame.getWidth();
+//            }
+//            if (i > 0) {
+//                x = barriers.get(i - 1).getX() + barrierGap;
+//            }
+//
+//            double y = rand.nextInt(((int) sceneGame.getHeight() - 100) - 10) + 10;
+//
+//            barriers.get(i).setBounds(x, y, 20, rand.nextInt(100 - 50) + 50);
+//            barriers.get(i).setFill(Color.LIME);
+//            barriers.get(i).setSpeed(barrierSpeed);
+//            gameLayout.getChildren().add(barriers.get(i).getSrc());
+//
+//        }
+
         tick(primaryStage);
     }
 
     private void gameStop(Stage primaryStage) {
-        gameLayout.getChildren().removeAll(player.getSrc(), topRect.getSrc(), botRect.getSrc());
+        gameLayout.getChildren().removeAll(player.getImageSrc(), topRect.getSrc(), botRect.getSrc());
         for (Actor barrierList : barriers) {
             gameLayout.getChildren().remove(barrierList.getSrc());
         }
@@ -144,6 +146,7 @@ public class Controller extends Application {
         primaryStage.setScene(mainMenu);
     }
 
+
     public void tick(Stage primaryStage) {
         new AnimationTimer() {
             @Override
@@ -151,18 +154,19 @@ public class Controller extends Application {
                 int i = 0;
                 trail.add(i, new Actor());
                 trail.get(i).setSrc(new Rectangle());
-                trail.get(i).setBounds(player.getX(), player.getY() + 5, 10, 3);
+                trail.get(i).setBounds(player.getImageX(), player.getImageY() + 5, 10, 3);
                 trail.get(i).setFill(Color.WHITESMOKE);
                 trail.get(i).setSpeed(-10);
                 gameLayout.getChildren().add(trail.get(i).getSrc());
-                i++;
+                System.out.println(trail.size());
 
                 for (Actor trails : trail) {
-                    if (trails.getY() < 0) {
+                    if (trails.getX() < 0) {
                         gameLayout.getChildren().remove(trails.getSrc());
                         trails.setSpeed(0);
+                    } else {
+                        trails.moveX(trails.getSpeed());
                     }
-                    trails.moveX(trails.getSpeed());
                 }
 
                 player.moveY(player.getSpeed());
@@ -185,7 +189,7 @@ public class Controller extends Application {
                     }
                 }
 
-                playerMove();
+                handleInput(primaryStage);
                 barrierMove();
                 score(primaryStage);
             }
@@ -202,7 +206,7 @@ public class Controller extends Application {
         }.start();
     }
 
-    private void playerMove() {
+    private void handleInput(Stage primaryStage) {
         sceneGame.setOnKeyPressed(new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent event) {
@@ -219,6 +223,12 @@ public class Controller extends Application {
                 if (event.getCode() == KeyCode.SPACE) {
                     player.setRotate(10);
                     player.setSpeed(-5);
+                }
+                if (event.getCode().equals(KeyCode.Q)) {
+                    primaryStage.close();
+                }
+                if (event.getCode().equals(KeyCode.N)) {
+                    noclip = !noclip;
                 }
             }
         });
@@ -242,11 +252,11 @@ public class Controller extends Application {
 
     private void score(Stage primaryStage) {
         primaryStage.setTitle("Copter | " + score);
-        if (tempScore % 10 == 0) {
+        if (tempScore % 5 == 0) {
             score++;
         }
         tempScore++;
-        System.out.println(score);
+//        System.out.println(score);
 
     }
 }

@@ -102,13 +102,45 @@ public class Actor {
     public void setImageSrc(Image imageSrc) {
         this.imageSrc = new ImageView();
         this.imageSrc.setImage(imageSrc);
-        this.getImageSrc().setLayoutX(this.getX());
-        this.getImageSrc().setLayoutY(this.getY());
+//        this.getImageSrc().setLayoutX(this.getX());
+//        this.getImageSrc().setLayoutY(this.getY());
         this.getImageSrc().setFitWidth(this.getWidth());
         this.getImageSrc().setFitHeight(this.getHeight());
         this.getImageSrc().setPreserveRatio(true);
         this.getImageSrc().setSmooth(true);
         this.getImageSrc().setCache(true);
+    }
+
+    public void setImageX(double x) {
+        this.getImageSrc().setLayoutX(x);
+    }
+
+    public double getImageX() {
+        return this.getImageSrc().getLayoutX();
+    }
+
+    public void setImageY(double y) {
+        this.getImageSrc().setLayoutY(y);
+    }
+
+    public double getImageY() {
+        return this.getImageSrc().getLayoutY();
+    }
+
+    public void setImageWidth(double width) {
+        this.getImageSrc().setFitWidth(width);
+    }
+
+    public double getImageWidth() {
+        return this.getImageSrc().getFitWidth();
+    }
+
+    public void setImageHeight(double height) {
+        this.getImageSrc().setFitHeight(height);
+    }
+
+    public double getImageHeight() {
+        return this.getImageSrc().getFitHeight();
     }
 
     public void setRotate(double degree) {
