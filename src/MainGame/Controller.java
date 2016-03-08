@@ -145,7 +145,7 @@ public class Controller extends Application {
     }
 
     private void gameStop() throws IOException {
-        File highScore = new File("high_score.txt");
+        File highScore = new File("src\\res\\high_score.txt");
         FileWriter writer = new FileWriter(highScore, true);
         Scanner hsIn = new Scanner(new FileReader(highScore));
 //        int hs = hsIn.nextInt();
