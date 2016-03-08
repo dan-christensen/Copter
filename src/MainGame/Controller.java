@@ -1,6 +1,9 @@
 package MainGame;
 
 import javafx.animation.AnimationTimer;
+import javafx.animation.KeyFrame;
+import javafx.animation.KeyValue;
+import javafx.animation.Timeline;
 import javafx.application.Application;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
@@ -12,8 +15,10 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
+import javafx.util.Duration;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -252,12 +257,25 @@ public class Controller extends Application {
         }
 
         private void playerCrash() {
-//            try {
-//                Thread.sleep(500);
-//            } catch (InterruptedException e) {
-//                e.printStackTrace();
-//            }
-            gameStop();
+            tick.stop();
+            Circle explosion = new Circle(player.getX() + player.getImageWidth(), player.getY() + (player.getImageHeight() / 2), 10, Color.ORANGERED);
+            gameLayout.getChildren().add(explosion);
+            Timeline tl = new Timeline(60);
+            KeyValue kv1 = new KeyValue(explosion.radiusProperty(), 60);
+            KeyValue kv2 = new KeyValue(explosion.fillProperty(), Color.BLACK);
+            KeyFrame kf1 = new KeyFrame(Duration.millis(250), kv1);
+            KeyFrame kf2 = new KeyFrame(Duration.millis(200), kv2);
+            tl.getKeyFrames().addAll(kf1, kf2);
+            tl.play();
+            tl.setOnFinished(e -> {
+                explosion.setFill(Color.BLACK);
+                try {
+                    Thread.sleep(500);
+                } catch (InterruptedException ignored) {
+                    ignored.printStackTrace();
+                }
+                gameStop();
+            });
         }
     }
 }
