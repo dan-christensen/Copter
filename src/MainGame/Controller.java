@@ -20,9 +20,14 @@ import javafx.scene.shape.Rectangle;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.Scanner;
 
 /**
  * MainGame.Copter
@@ -139,7 +144,11 @@ public class Controller extends Application {
         tick.start();
     }
 
-    private void gameStop() {
+    private void gameStop() throws IOException {
+        File highScore = new File("high_score.txt");
+        FileWriter writer = new FileWriter(highScore, true);
+        Scanner hsIn = new Scanner(new FileReader(highScore));
+//        int hs = hsIn.nextInt();
         tick.stop();
         gameLayout.getChildren().removeAll(player.getImageSrc(), topRect.getSrc(), botRect.getSrc());
         for (Actor barrierList : barriers) {
@@ -148,6 +157,15 @@ public class Controller extends Application {
         for (Actor trails : trail) {
             gameLayout.getChildren().remove(trails.getSrc());
         }
+        if (score > hsIn.nextInt()) {
+            FileWriter temp = new FileWriter(highScore, false);
+            temp.write("");
+            temp.close();
+            writer.write("" + score);
+            writer.flush();
+            writer.close();
+        }
+//        System.out.println(hs);
         score = 0;
         this.primaryStage.setScene(mainMenu);
     }
@@ -171,7 +189,11 @@ public class Controller extends Application {
                     player.setSpeed(-5);
                 }
                 if (event.getCode().equals(KeyCode.Q)) {
-                    gameStop();
+                    try {
+                        gameStop();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
                 }
                 if (event.getCode().equals(KeyCode.N)) {
                     noclip = !noclip;
@@ -202,7 +224,6 @@ public class Controller extends Application {
             score++;
         }
         tempScore++;
-//        System.out.println(score);
 
     }
 
@@ -221,7 +242,6 @@ public class Controller extends Application {
             trail.get(i).setXSpeed(rand.nextInt((-1) - (-5)) + (-5));
             trail.get(i).setYSpeed(rand.nextInt(1 - (-1)) + (-1));
             gameLayout.getChildren().add(trail.get(i).getSrc());
-            System.out.println(trail.get(trail.size() - 1).getX());
 
             for (Actor trails : trail) {
                 if (trails.getX() < 0) {
@@ -282,7 +302,11 @@ public class Controller extends Application {
                 } catch (InterruptedException ignored) {
                     ignored.printStackTrace();
                 }
-                gameStop();
+                try {
+                    gameStop();
+                } catch (IOException e1) {
+                    e1.printStackTrace();
+                }
             });
         }
     }

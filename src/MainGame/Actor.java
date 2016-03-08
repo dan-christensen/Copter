@@ -36,6 +36,7 @@ public class Actor {
     }
 
     public void setX(double x) {
+        this.x = x;
         this.getSrc().setLayoutX(x);
         tempX = x;
     }
@@ -45,6 +46,7 @@ public class Actor {
     }
 
     public void setY(double y) {
+        this.y = y;
         this.getSrc().setLayoutY(y);
         tempY = y;
     }
@@ -54,6 +56,7 @@ public class Actor {
     }
 
     public void setWidth(double width) {
+        this.width = width;
         this.getSrc().setWidth(width);
     }
 
@@ -62,6 +65,7 @@ public class Actor {
     }
 
     public void setHeight(double height) {
+        this.height = height;
         this.getSrc().setHeight(height);
     }
 
