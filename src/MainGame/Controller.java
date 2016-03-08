@@ -29,8 +29,6 @@ import java.util.Random;
  * Created by Dan on 2/24/2016.
  */
 
-// TODO reset barriers after game end, add explosion, remove trail when off screen.
-
 public class Controller extends Application {
 
     Random rand;
@@ -258,17 +256,20 @@ public class Controller extends Application {
 
         private void playerCrash() {
             tick.stop();
-            Circle explosion = new Circle(player.getX() + player.getImageWidth(), player.getY() + (player.getImageHeight() / 2), 10, Color.ORANGERED);
+            Circle explosion = new Circle(
+                    player.getX() + (player.getImageWidth()) / 2,
+                    player.getY() + (player.getImageHeight() / 2),
+                    10,
+                    Color.ORANGERED);
             gameLayout.getChildren().add(explosion);
-            Timeline tl = new Timeline(60);
+            Timeline tl = new Timeline(250);
             KeyValue kv1 = new KeyValue(explosion.radiusProperty(), 60);
             KeyValue kv2 = new KeyValue(explosion.fillProperty(), Color.BLACK);
-            KeyFrame kf1 = new KeyFrame(Duration.millis(250), kv1);
-            KeyFrame kf2 = new KeyFrame(Duration.millis(200), kv2);
+            KeyFrame kf1 = new KeyFrame(Duration.millis(100), kv1);
+            KeyFrame kf2 = new KeyFrame(Duration.millis(250), kv2);
             tl.getKeyFrames().addAll(kf1, kf2);
             tl.play();
             tl.setOnFinished(e -> {
-                explosion.setFill(Color.BLACK);
                 try {
                     Thread.sleep(500);
                 } catch (InterruptedException ignored) {
