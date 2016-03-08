@@ -16,9 +16,9 @@ public class Actor {
     private double width;
     private double height;
     private int speed;
-    private double tempX;
     private ImageView imageSrc;
 
+    private double tempX;
     private double tempY;
 
     public Rectangle getSrc() {
@@ -83,8 +83,8 @@ public class Actor {
     }
 
     public void move(int xSpeed, int ySpeed) {
-        this.setX(tempX += xSpeed);
-        this.setY(tempY += ySpeed);
+        this.moveX(xSpeed);
+        this.moveY(ySpeed);
     }
 
     public void moveX(int xSpeed) {
@@ -93,6 +93,7 @@ public class Actor {
 
     public void moveY(int ySpeed) {
         this.setY(tempY += ySpeed);
+        this.moveImageY((int) tempY);
     }
 
     public ImageView getImageSrc() {
@@ -102,13 +103,16 @@ public class Actor {
     public void setImageSrc(Image imageSrc) {
         this.imageSrc = new ImageView();
         this.imageSrc.setImage(imageSrc);
-//        this.getImageSrc().setLayoutX(this.getX());
-//        this.getImageSrc().setLayoutY(this.getY());
         this.getImageSrc().setFitWidth(this.getWidth());
         this.getImageSrc().setFitHeight(this.getHeight());
         this.getImageSrc().setPreserveRatio(true);
         this.getImageSrc().setSmooth(true);
         this.getImageSrc().setCache(true);
+    }
+
+    public void setImageLocation(double x, double y) {
+        this.setImageX(x);
+        this.setImageY(y);
     }
 
     public void setImageX(double x) {
@@ -145,5 +149,18 @@ public class Actor {
 
     public void setRotate(double degree) {
         this.getImageSrc().setRotate(degree);
+    }
+
+    public void moveImage(int xSpeed, int ySpeed) {
+        this.moveImageX(xSpeed);
+        this.moveImageY(ySpeed);
+    }
+
+    public void moveImageX(int xSpeed) {
+        this.setImageX(xSpeed);
+    }
+
+    public void moveImageY(int ySpeed) {
+        this.setImageY(ySpeed);
     }
 }

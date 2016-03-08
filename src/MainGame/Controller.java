@@ -24,7 +24,7 @@ import java.util.Random;
  * Created by Dan on 2/24/2016.
  */
 
-// TODO reset barriers after game end, add explosion, remove trail when off screen, move the image when the player position is moved.
+// TODO reset barriers after game end, add explosion, remove trail when off screen.
 
 public class Controller extends Application {
 
@@ -49,7 +49,6 @@ public class Controller extends Application {
     int tempScore = 0;
     private int score = 0;
 
-
     public Controller() {
         noclip = false;
         rand = new Random();
@@ -63,6 +62,10 @@ public class Controller extends Application {
     }
 
     public void start(Stage primaryStage) throws Exception {
+        MyTimer timer = new MyTimer();
+        timer.start();
+
+
         Button start = new Button("Start");
         Button quit = new Button("Exit");
         menuItems.getChildren().addAll(start, quit);
@@ -101,35 +104,35 @@ public class Controller extends Application {
         gameLayout.getChildren().addAll(topRect.getSrc(), botRect.getSrc());
 
         player.setSrc(new Rectangle());
-//        player.setBounds(playerX, playerY, 50, 50);
+        player.setBounds(playerX, playerY, 50, 50);
         player.setImageSrc(new Image(getClass().getResourceAsStream("../images/copter.png")));
-        player.setImageX(playerX);
-        player.setImageY(playerY);
+        player.setImageLocation(player.getX(), player.getY());
         player.setImageWidth(50);
-        player.setImageWidth(50);
+        player.setImageHeight(50);
         player.setSpeed(playerSpeed);
+        player.setFill(Color.CYAN);
         player.setRotate(20);
-        gameLayout.getChildren().add(player.getImageSrc());
+        gameLayout.getChildren().addAll(/*player.getSrc(),*/ player.getImageSrc());
 
-//        for (int i = 0; i < nBarriers; i++) {
-//            barriers.add(new Actor());
-//            barriers.get(i).setSrc(new Rectangle());
-//            double x = 0;
-//            if (i == 0) {
-//                x = sceneGame.getWidth();
-//            }
-//            if (i > 0) {
-//                x = barriers.get(i - 1).getX() + barrierGap;
-//            }
-//
-//            double y = rand.nextInt(((int) sceneGame.getHeight() - 100) - 10) + 10;
-//
-//            barriers.get(i).setBounds(x, y, 20, rand.nextInt(100 - 50) + 50);
-//            barriers.get(i).setFill(Color.LIME);
-//            barriers.get(i).setSpeed(barrierSpeed);
-//            gameLayout.getChildren().add(barriers.get(i).getSrc());
-//
-//        }
+        for (int i = 0; i < nBarriers; i++) {
+            barriers.add(new Actor());
+            barriers.get(i).setSrc(new Rectangle());
+            double x = 0;
+            if (i == 0) {
+                x = sceneGame.getWidth();
+            }
+            if (i > 0) {
+                x = barriers.get(i - 1).getX() + barrierGap;
+            }
+
+            double y = rand.nextInt(((int) sceneGame.getHeight() - 100) - 10) + 10;
+
+            barriers.get(i).setBounds(x, y, 20, rand.nextInt(100 - 50) + 50);
+            barriers.get(i).setFill(Color.LIME);
+            barriers.get(i).setSpeed(barrierSpeed);
+            gameLayout.getChildren().add(barriers.get(i).getSrc());
+
+        }
 
         tick(primaryStage);
     }
@@ -158,7 +161,7 @@ public class Controller extends Application {
                 trail.get(i).setFill(Color.WHITESMOKE);
                 trail.get(i).setSpeed(-10);
                 gameLayout.getChildren().add(trail.get(i).getSrc());
-                System.out.println(trail.size());
+                System.out.println(trail.get(trail.size() - 1).getX());
 
                 for (Actor trails : trail) {
                     if (trails.getX() < 0) {
@@ -169,8 +172,14 @@ public class Controller extends Application {
                     }
                 }
 
+                checkCollision();
                 player.moveY(player.getSpeed());
+                handleInput(primaryStage);
+                moveBarriers();
+                score(primaryStage);
+            }
 
+            private void checkCollision() {
                 if (!noclip) {
                     for (Actor barrierList : barriers) {
 
@@ -188,10 +197,6 @@ public class Controller extends Application {
 
                     }
                 }
-
-                handleInput(primaryStage);
-                barrierMove();
-                score(primaryStage);
             }
 
             private void playerCrash() {
@@ -244,7 +249,7 @@ public class Controller extends Application {
         });
     }
 
-    private void barrierMove() {
+    private void moveBarriers() {
         for (Actor barrierList : barriers) {
             barrierList.moveX(barrierList.getSpeed());
         }
@@ -258,5 +263,12 @@ public class Controller extends Application {
         tempScore++;
 //        System.out.println(score);
 
+    }
+
+    private class MyTimer extends AnimationTimer {
+        @Override
+        public void handle(long now) {
+            System.out.println("WORKS");
+        }
     }
 }
