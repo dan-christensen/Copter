@@ -17,6 +17,8 @@ import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
+import javafx.scene.text.Font;
+import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
@@ -57,8 +59,11 @@ public class Controller extends Application {
 
     int tempScore = 0;
     private int score = 0;
+    private int hs;
 
     GameLoop tick = new GameLoop();
+
+    // TODO rework the high score display.
 
     public Controller() {
         noclip = false;
@@ -148,7 +153,6 @@ public class Controller extends Application {
         File highScore = new File("src\\res\\high_score.txt");
         FileWriter writer = new FileWriter(highScore, true);
         Scanner hsIn = new Scanner(new FileReader(highScore));
-//        int hs = hsIn.nextInt();
         tick.stop();
         gameLayout.getChildren().removeAll(player.getImageSrc(), topRect.getSrc(), botRect.getSrc());
         for (Actor barrierList : barriers) {
@@ -158,12 +162,18 @@ public class Controller extends Application {
             gameLayout.getChildren().remove(trails.getSrc());
         }
         if (score > hsIn.nextInt()) {
+            Text hsText = new Text();
             FileWriter temp = new FileWriter(highScore, false);
             temp.write("");
             temp.close();
             writer.write("" + score);
             writer.flush();
             writer.close();
+            hs = score;
+            hsText.setText("High Score: " + hs);
+            hsText.setFont(Font.font(30));
+            hsText.setFill(Color.WHITE);
+            menuItems.getChildren().add(hsText);
         }
 //        System.out.println(hs);
         score = 0;
