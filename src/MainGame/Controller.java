@@ -212,9 +212,14 @@ public class Controller extends Application {
             int i = 0;
             trail.add(i, new Actor());
             trail.get(i).setSrc(new Rectangle());
-            trail.get(i).setBounds(player.getImageX(), player.getImageY() + 5, 10, 3);
+            trail.get(i).setBounds(
+                    player.getImageX(),
+                    player.getImageY() + (rand.nextInt(10 - 5) + 5),
+                    3,
+                    3);
             trail.get(i).setFill(Color.WHITESMOKE);
-            trail.get(i).setSpeed(-10);
+            trail.get(i).setXSpeed(rand.nextInt((-1) - (-5)) + (-5));
+            trail.get(i).setYSpeed(rand.nextInt(1 - (-1)) + (-1));
             gameLayout.getChildren().add(trail.get(i).getSrc());
             System.out.println(trail.get(trail.size() - 1).getX());
 
@@ -223,7 +228,9 @@ public class Controller extends Application {
                     gameLayout.getChildren().remove(trails.getSrc());
                     trails.setSpeed(0);
                 } else {
-                    trails.moveX(trails.getSpeed());
+                    trails.move(
+                            trails.getXSpeed(),
+                            trails.getYSpeed());
                 }
             }
 

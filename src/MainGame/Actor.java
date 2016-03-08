@@ -16,7 +16,9 @@ public class Actor {
     private double width;
     private double height;
     private int speed;
-    private ImageView imageSrc;
+    private int xSpeed;
+    private int ySpeed;
+    private ImageView imageSrc = null;
 
     private double tempX;
     private double tempY;
@@ -71,6 +73,22 @@ public class Actor {
         this.speed = speed;
     }
 
+    public int getXSpeed() {
+        return xSpeed;
+    }
+
+    public void setXSpeed(int xSpeed) {
+        this.xSpeed = xSpeed;
+    }
+
+    public int getYSpeed() {
+        return ySpeed;
+    }
+
+    public void setYSpeed(int ySpeed) {
+        this.ySpeed = ySpeed;
+    }
+
     public void setFill(Color color) {
         this.getSrc().setFill(color);
     }
@@ -89,11 +107,16 @@ public class Actor {
 
     public void moveX(int xSpeed) {
         this.setX(tempX += xSpeed);
+        if (imageSrc != null) {
+            this.moveImageX((int) tempY);
+        }
     }
 
     public void moveY(int ySpeed) {
         this.setY(tempY += ySpeed);
-        this.moveImageY((int) tempY);
+        if (imageSrc != null) {
+            this.moveImageY((int) tempY);
+        }
     }
 
     public ImageView getImageSrc() {
