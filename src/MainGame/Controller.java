@@ -1,9 +1,6 @@
 package MainGame;
 
-import javafx.animation.AnimationTimer;
-import javafx.animation.KeyFrame;
-import javafx.animation.KeyValue;
-import javafx.animation.Timeline;
+import javafx.animation.*;
 import javafx.application.Application;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
@@ -121,7 +118,7 @@ public class Controller extends Application {
         } catch (InputMismatchException e) {
             System.out.println(e.getMessage());
         }
-        hsText.setLayoutX(gameScene.getWidth() - 100);
+        hsText.setLayoutX(gameScene.getWidth() - hsText.getLayoutBounds().getWidth());
         hsText.setLayoutY(25);
         hsText.setFont(Font.font(15));
         hsText.setFill(Color.WHITE);
@@ -138,15 +135,15 @@ public class Controller extends Application {
         gameLayout.getChildren().addAll(topRect.getSrc(), botRect.getSrc());
 
         player.setSrc(new Rectangle());
-        player.setBounds(playerX, playerY, 50, 50);
+        player.setBounds(playerX, playerY, 50, 35);
         player.setImageSrc(new Image(getClass().getResourceAsStream("../images/copter.png")));
         player.setImageLocation(player.getX(), player.getY());
-        player.setImageWidth(50);
-        player.setImageHeight(50);
+        player.setImageWidth(player.getWidth());
+        player.setImageHeight(player.getHeight());
         player.setSpeed(playerSpeed);
-        player.setFill(Color.CYAN);
+        player.getSrc().setStroke(null);
         player.setRotate(20);
-        gameLayout.getChildren().add(player.getImageSrc());
+        gameLayout.getChildren().addAll(player.getSrc(), player.getImageSrc());
 
         for (int i = 0; i < nBarriers; i++) {
             barriers.add(new Actor());
@@ -227,6 +224,14 @@ public class Controller extends Application {
                 if (event.getCode().equals(KeyCode.N)) {
                     noclip = !noclip;
                 }
+                if (event.getCode().equals(KeyCode.H)) {
+                    player.getSrc().setStroke(Color.CYAN);
+                    topRect.getSrc().setStroke(Color.CYAN);
+                    botRect.getSrc().setStroke(Color.CYAN);
+                    for (Actor barrierList : barriers) {
+                        barrierList.getSrc().setStroke(Color.CYAN);
+                    }
+                }
             }
         });
         gameScene.setOnKeyReleased(new EventHandler<KeyEvent>() {
@@ -303,7 +308,7 @@ public class Controller extends Application {
                     }
                 }
 
-                if (player.getImageSrc().getBoundsInParent().intersects(topRect.getSrc().getBoundsInParent()) || player.getImageSrc().getBoundsInParent().intersects(botRect.getSrc().getBoundsInParent())) {
+                if (player.getSrc().getBoundsInParent().intersects(topRect.getSrc().getBoundsInParent()) || player.getSrc().getBoundsInParent().intersects(botRect.getSrc().getBoundsInParent())) {
                     playerCrash();
 
                 }
