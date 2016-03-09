@@ -61,7 +61,7 @@ public class Controller extends Application {
 
     private GameLoop tick = new GameLoop();
 
-    // TODO rework the high score display.
+    // TODO rework the high score display, make barriers save to, read from a file.
 
     public Controller() {
         noclip = false;
@@ -70,7 +70,7 @@ public class Controller extends Application {
         gameScene = new Scene(gameLayout, 800, 300, Color.BLACK);
         barrierSpeed = -10;
         nBarriers = 200;
-        barrierGap = 300;
+        barrierGap = 10;
         hsText = new Text();
     }
 
