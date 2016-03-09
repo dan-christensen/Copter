@@ -22,10 +22,7 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -41,27 +38,28 @@ public class Controller extends Application {
     Random rand;
 
     private Group gameLayout;
-    private VBox menuItems;
-    private Scene sceneGame;
-    private Scene mainMenu;
+    private VBox menuLayout;
+    private Scene gameScene;
+    private Scene menuScene;
     private Actor player;
     private int playerSpeed;
 
-    Stage primaryStage;
+    private Stage primaryStage;
     private List<Actor> barriers;
     private int nBarriers;
     private int barrierGap;
     private int barrierSpeed;
-    Actor topRect;
-    Actor botRect;
+    private Actor topRect;
+    private Actor botRect;
+    private Text hsText;
     private List<Actor> trail;
     private boolean noclip;
 
-    int tempScore = 0;
     private int score = 0;
+    private int scoreAdder = 0;
     private int hs;
 
-    GameLoop tick = new GameLoop();
+    private GameLoop tick = new GameLoop();
 
     // TODO rework the high score display.
 
@@ -69,30 +67,31 @@ public class Controller extends Application {
         noclip = false;
         rand = new Random();
         gameLayout = new Group();
-        menuItems = new VBox(20);
-        sceneGame = new Scene(gameLayout, 800, 300, Color.BLACK);
-        mainMenu = new Scene(menuItems, 300, 300, Color.BLACK);
+        gameScene = new Scene(gameLayout, 800, 300, Color.BLACK);
         barrierSpeed = -10;
         nBarriers = 200;
         barrierGap = 300;
+        hsText = new Text();
     }
 
     public void start(Stage primaryStage) throws Exception {
         this.primaryStage = primaryStage;
+        menuLayout = new VBox(20);
+        menuScene = new Scene(menuLayout, 300, 300, Color.BLACK);
         Button start = new Button("Start");
         Button quit = new Button("Exit");
-        menuItems.getChildren().addAll(start, quit);
-        menuItems.setStyle("-fx-background-color: black");
-        menuItems.setAlignment(Pos.CENTER);
+        menuLayout.getChildren().addAll(start, quit);
+        menuLayout.setStyle("-fx-background-color: black");
+        menuLayout.setAlignment(Pos.CENTER);
         start.setOnAction(e -> {
-            this.primaryStage.setScene(sceneGame);
+            this.primaryStage.setScene(gameScene);
             gameStart();
         });
         quit.setOnAction(e -> this.primaryStage.close());
 
         this.primaryStage.setTitle("Copter");
         this.primaryStage.getIcons().add(new Image(getClass().getResourceAsStream("../images/copter.png")));
-        this.primaryStage.setScene(mainMenu);
+        this.primaryStage.setScene(menuScene);
         this.primaryStage.setResizable(false);
         this.primaryStage.show();
     }
@@ -107,12 +106,20 @@ public class Controller extends Application {
         playerSpeed = 5;
         trail = new ArrayList<>();
 
+        hsText.setText("High Score: " + hs);
+        hsText.setLayoutX(gameScene.getWidth() - 100);
+        hsText.setLayoutY(25);
+        hsText.setFont(Font.font(10));
+        hsText.setFill(Color.WHITE);
+
+        gameLayout.getChildren().add(hsText);
+
         topRect.setSrc(new Rectangle());
-        topRect.setBounds(0, 0, (int) sceneGame.getWidth() + 10, 10);
+        topRect.setBounds(0, 0, (int) gameScene.getWidth() + 10, 10);
         topRect.setFill(Color.LIME);
 
         botRect.setSrc(new Rectangle());
-        botRect.setBounds(0, 290, (int) sceneGame.getWidth() + 10, 10);
+        botRect.setBounds(0, 290, (int) gameScene.getWidth() + 10, 10);
         botRect.setFill(Color.LIME);
         gameLayout.getChildren().addAll(topRect.getSrc(), botRect.getSrc());
 
@@ -125,20 +132,20 @@ public class Controller extends Application {
         player.setSpeed(playerSpeed);
         player.setFill(Color.CYAN);
         player.setRotate(20);
-        gameLayout.getChildren().addAll(/*player.getSrc(),*/ player.getImageSrc());
+        gameLayout.getChildren().add(player.getImageSrc());
 
         for (int i = 0; i < nBarriers; i++) {
             barriers.add(new Actor());
             barriers.get(i).setSrc(new Rectangle());
             double x = 0;
             if (i == 0) {
-                x = sceneGame.getWidth();
+                x = gameScene.getWidth();
             }
             if (i > 0) {
                 x = barriers.get(i - 1).getX() + barrierGap;
             }
 
-            double y = rand.nextInt(((int) sceneGame.getHeight() - 100) - 10) + 10;
+            double y = rand.nextInt(((int) gameScene.getHeight() - 100) - 10) + 10;
 
             barriers.get(i).setBounds(x, y, 20, rand.nextInt(100 - 50) + 50);
             barriers.get(i).setFill(Color.LIME);
@@ -150,38 +157,43 @@ public class Controller extends Application {
     }
 
     private void gameStop() throws IOException {
-        File highScore = new File("src\\res\\high_score.txt");
-        FileWriter writer = new FileWriter(highScore, true);
-        Scanner hsIn = new Scanner(new FileReader(highScore));
         tick.stop();
-        gameLayout.getChildren().removeAll(player.getImageSrc(), topRect.getSrc(), botRect.getSrc());
+        gameLayout.getChildren().clear();
         for (Actor barrierList : barriers) {
             gameLayout.getChildren().remove(barrierList.getSrc());
         }
         for (Actor trails : trail) {
             gameLayout.getChildren().remove(trails.getSrc());
         }
+        handleHighScore();
+        score = 0;
+        this.primaryStage.setScene(menuScene);
+    }
+
+    private void handleHighScore() throws IOException {
+        File highScore = new File("src\\res\\high_score.txt");
+        FileWriter writer = new FileWriter(highScore, true);
+        Scanner hsIn = new Scanner(new FileReader(highScore));
+        if (highScore.length() == 0) {
+            FileWriter temp = new FileWriter(highScore, false);
+            temp.write("" + 0);
+            temp.flush();
+            temp.close();
+        }
         if (score > hsIn.nextInt()) {
-            Text hsText = new Text();
             FileWriter temp = new FileWriter(highScore, false);
             temp.write("");
+            temp.flush();
             temp.close();
             writer.write("" + score);
             writer.flush();
             writer.close();
             hs = score;
-            hsText.setText("High Score: " + hs);
-            hsText.setFont(Font.font(30));
-            hsText.setFill(Color.WHITE);
-            menuItems.getChildren().add(hsText);
         }
-//        System.out.println(hs);
-        score = 0;
-        this.primaryStage.setScene(mainMenu);
     }
 
     private void handleInput() {
-        sceneGame.setOnKeyPressed(new EventHandler<KeyEvent>() {
+        gameScene.setOnKeyPressed(new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent event) {
                 if (event.getCode().equals(KeyCode.DOWN) || event.getCode().equals(KeyCode.S)) {
@@ -210,7 +222,7 @@ public class Controller extends Application {
                 }
             }
         });
-        sceneGame.setOnKeyReleased(new EventHandler<KeyEvent>() {
+        gameScene.setOnKeyReleased(new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent event) {
                 player.setSpeed(0);
@@ -230,10 +242,10 @@ public class Controller extends Application {
 
     private void score() {
         this.primaryStage.setTitle("Copter | " + score);
-        if (tempScore % 5 == 0) {
+        if (scoreAdder % 5 == 0) {
             score++;
         }
-        tempScore++;
+        scoreAdder++;
 
     }
 
