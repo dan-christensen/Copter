@@ -23,10 +23,7 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-import java.util.Scanner;
+import java.util.*;
 
 /**
  * MainGame.Copter
@@ -57,6 +54,7 @@ public class Controller extends Application {
 
     private int score = 0;
     private int scoreAdder = 0;
+    private File highScore;
     private int hs;
 
     private GameLoop tick = new GameLoop();
@@ -70,7 +68,8 @@ public class Controller extends Application {
         gameScene = new Scene(gameLayout, 800, 300, Color.BLACK);
         barrierSpeed = -10;
         nBarriers = 200;
-        barrierGap = 10;
+        barrierGap = 300;
+        highScore = new File("src\\res\\high_score.txt");
         hsText = new Text();
     }
 
@@ -85,7 +84,11 @@ public class Controller extends Application {
         menuLayout.setAlignment(Pos.CENTER);
         start.setOnAction(e -> {
             this.primaryStage.setScene(gameScene);
-            gameStart();
+            try {
+                gameStart();
+            } catch (IOException e1) {
+                e1.printStackTrace();
+            }
         });
         quit.setOnAction(e -> this.primaryStage.close());
 
@@ -96,7 +99,7 @@ public class Controller extends Application {
         this.primaryStage.show();
     }
 
-    private void gameStart() {
+    private void gameStart() throws IOException {
         player = new Actor();
         double playerX = 50;
         double playerY = 100;
@@ -106,10 +109,21 @@ public class Controller extends Application {
         playerSpeed = 5;
         trail = new ArrayList<>();
 
-        hsText.setText("High Score: " + hs);
+        if (highScore.length() == 0) {
+            FileWriter temp = new FileWriter(highScore, false);
+            temp.write("" + 0);
+            temp.flush();
+            temp.close();
+        }
+        Scanner hsIn = new Scanner(highScore);
+        try {
+            hsText.setText("High Score: " + hsIn.nextInt());
+        } catch (InputMismatchException e) {
+            System.out.println(e.getMessage());
+        }
         hsText.setLayoutX(gameScene.getWidth() - 100);
         hsText.setLayoutY(25);
-        hsText.setFont(Font.font(10));
+        hsText.setFont(Font.font(15));
         hsText.setFill(Color.WHITE);
 
         gameLayout.getChildren().add(hsText);
@@ -171,15 +185,8 @@ public class Controller extends Application {
     }
 
     private void handleHighScore() throws IOException {
-        File highScore = new File("src\\res\\high_score.txt");
         FileWriter writer = new FileWriter(highScore, true);
         Scanner hsIn = new Scanner(new FileReader(highScore));
-        if (highScore.length() == 0) {
-            FileWriter temp = new FileWriter(highScore, false);
-            temp.write("" + 0);
-            temp.flush();
-            temp.close();
-        }
         if (score > hsIn.nextInt()) {
             FileWriter temp = new FileWriter(highScore, false);
             temp.write("");
