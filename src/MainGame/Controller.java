@@ -1,6 +1,5 @@
 package MainGame;
 
-import javafx.animation.*;
 import javafx.application.Application;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
@@ -12,12 +11,10 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
-import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
-import javafx.util.Duration;
 
 import java.io.*;
 import java.util.*;
@@ -31,30 +28,30 @@ public class Controller extends Application {
 
     Random rand;
 
-    private Group gameLayout;
+    public Group gameLayout;
     private VBox menuLayout;
     private Scene gameScene;
     private Scene menuScene;
-    private Actor player;
+    public Actor player;
     private int playerSpeed;
 
     private Stage primaryStage;
-    private List<Actor> barriers;
+    public List<Actor> barriers;
     private int nBarriers;
     private int barrierGap;
     private int barrierSpeed;
-    private Actor topRect;
-    private Actor botRect;
+    public Actor topRect;
+    public Actor botRect;
     private Text hsText;
-    private List<Actor> trail;
-    private boolean noclip;
+    public List<Actor> trail;
+    public boolean noclip;
 
     private int score = 0;
     private int scoreAdder = 0;
     private File highScore;
     private int hs;
 
-    private GameLoop tick = new GameLoop();
+    public GameLoop tick = new GameLoop(this);
 
     // TODO rework the high score display, make barriers save to, read from a file.
 
@@ -65,7 +62,7 @@ public class Controller extends Application {
         gameScene = new Scene(gameLayout, 800, 300, Color.BLACK);
         barrierSpeed = -10;
         nBarriers = 200;
-        barrierGap = 300;
+        barrierGap = 400;
         highScore = new File("src\\res\\high_score.txt");
         hsText = new Text();
     }
@@ -167,7 +164,7 @@ public class Controller extends Application {
         tick.start();
     }
 
-    private void gameStop() throws IOException {
+    public void gameStop() throws IOException {
         tick.stop();
         gameLayout.getChildren().clear();
         for (Actor barrierList : barriers) {
@@ -196,7 +193,7 @@ public class Controller extends Application {
         }
     }
 
-    private void handleInput() {
+    public void handleInput() {
         gameScene.setOnKeyPressed(new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent event) {
@@ -246,13 +243,13 @@ public class Controller extends Application {
         });
     }
 
-    private void moveBarriers() {
+    public void moveBarriers() {
         for (Actor barrierList : barriers) {
             barrierList.moveX(barrierList.getSpeed());
         }
     }
 
-    private void score() {
+    public void score() {
         this.primaryStage.setTitle("Copter | " + score);
         if (scoreAdder % 5 == 0) {
             score++;
@@ -261,87 +258,4 @@ public class Controller extends Application {
 
     }
 
-    private class GameLoop extends AnimationTimer {
-        @Override
-        public void handle(long now) {
-            int i = 0;
-            trail.add(i, new Actor());
-            trail.get(i).setSrc(new Rectangle());
-            trail.get(i).setBounds(
-                    player.getImageX(),
-                    player.getImageY() + (rand.nextInt(10 - 5) + 5),
-                    3,
-                    3);
-            trail.get(i).setFill(Color.WHITESMOKE);
-            trail.get(i).setXSpeed(rand.nextInt((-1) - (-5)) + (-5));
-            trail.get(i).setYSpeed(rand.nextInt(1 - (-1)) + (-1));
-            gameLayout.getChildren().add(trail.get(i).getSrc());
-
-            for (Actor trails : trail) {
-                if (trails.getX() < 0) {
-                    gameLayout.getChildren().remove(trails.getSrc());
-                    trails.setSpeed(0);
-                } else {
-                    trails.move(
-                            trails.getXSpeed(),
-                            trails.getYSpeed());
-                }
-            }
-
-            checkCollision();
-            player.moveY(player.getSpeed());
-            handleInput();
-            moveBarriers();
-            score();
-        }
-
-        private void checkCollision() {
-            if (!noclip) {
-                for (Actor barrierList : barriers) {
-
-                    if (player.getImageSrc().getBoundsInParent().intersects(barrierList.getSrc().getBoundsInParent())) {
-                        playerCrash();
-                    }
-                    if (barrierList.getX() + barrierList.getWidth() < 0) {
-                        gameLayout.getChildren().remove(barrierList.getSrc());
-                        barrierList.setSpeed(0);
-                    }
-                }
-
-                if (player.getSrc().getBoundsInParent().intersects(topRect.getSrc().getBoundsInParent()) || player.getSrc().getBoundsInParent().intersects(botRect.getSrc().getBoundsInParent())) {
-                    playerCrash();
-
-                }
-            }
-        }
-
-        private void playerCrash() {
-            tick.stop();
-            Circle explosion = new Circle(
-                    player.getX() + (player.getImageWidth()) / 2,
-                    player.getY() + (player.getImageHeight() / 2),
-                    10,
-                    Color.ORANGERED);
-            gameLayout.getChildren().add(explosion);
-            Timeline tl = new Timeline(250);
-            KeyValue kv1 = new KeyValue(explosion.radiusProperty(), 60);
-            KeyValue kv2 = new KeyValue(explosion.fillProperty(), Color.BLACK);
-            KeyFrame kf1 = new KeyFrame(Duration.millis(100), kv1);
-            KeyFrame kf2 = new KeyFrame(Duration.millis(250), kv2);
-            tl.getKeyFrames().addAll(kf1, kf2);
-            tl.play();
-            tl.setOnFinished(e -> {
-                try {
-                    Thread.sleep(500);
-                } catch (InterruptedException ignored) {
-                    ignored.printStackTrace();
-                }
-                try {
-                    gameStop();
-                } catch (IOException e1) {
-                    e1.printStackTrace();
-                }
-            });
-        }
-    }
 }
