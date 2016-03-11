@@ -16,7 +16,10 @@ import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileReader;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.*;
 
 /**
@@ -30,7 +33,7 @@ public class Controller extends Application {
 
     public Group gameLayout;
     private VBox menuLayout;
-    private Scene gameScene;
+    public Scene gameScene;
     private Scene menuScene;
     public Actor player;
     private int playerSpeed;
@@ -46,14 +49,14 @@ public class Controller extends Application {
     public List<Actor> trail;
     public boolean noclip;
 
-    private int score = 0;
+    public int score = 0;
     private int scoreAdder = 0;
     private File highScore;
     private int hs;
 
     public GameLoop tick = new GameLoop(this);
 
-    // TODO rework the high score display, make barriers save to, read from a file.
+    // TODO Make barriers save to, read from a file.
 
     public Controller() {
         noclip = false;
@@ -110,14 +113,11 @@ public class Controller extends Application {
             temp.close();
         }
         Scanner hsIn = new Scanner(highScore);
-        try {
-            hsText.setText("High Score: " + hsIn.nextInt());
-        } catch (InputMismatchException e) {
-            System.out.println(e.getMessage());
-        }
-        hsText.setLayoutX(gameScene.getWidth() - hsText.getLayoutBounds().getWidth());
-        hsText.setLayoutY(25);
+        hsText.setText("High Score: " + hsIn.nextInt());
         hsText.setFont(Font.font(15));
+        hsText.setLayoutX(
+                gameScene.getWidth() - hsText.getLayoutBounds().getWidth());
+        hsText.setLayoutY(25);
         hsText.setFill(Color.WHITE);
 
         gameLayout.getChildren().add(hsText);
@@ -137,7 +137,8 @@ public class Controller extends Application {
         player.setImageLocation(player.getX(), player.getY());
         player.setImageWidth(player.getWidth());
         player.setImageHeight(player.getHeight());
-        player.setSpeed(playerSpeed);
+        player.setYSpeed(playerSpeed);
+        player.setFill(Color.TRANSPARENT);
         player.getSrc().setStroke(null);
         player.setRotate(20);
         gameLayout.getChildren().addAll(player.getSrc(), player.getImageSrc());
@@ -157,7 +158,7 @@ public class Controller extends Application {
 
             barriers.get(i).setBounds(x, y, 20, rand.nextInt(100 - 50) + 50);
             barriers.get(i).setFill(Color.LIME);
-            barriers.get(i).setSpeed(barrierSpeed);
+            barriers.get(i).setXSpeed(barrierSpeed);
             gameLayout.getChildren().add(barriers.get(i).getSrc());
 
         }
@@ -198,18 +199,16 @@ public class Controller extends Application {
             @Override
             public void handle(KeyEvent event) {
                 if (event.getCode().equals(KeyCode.DOWN) || event.getCode().equals(KeyCode.S)) {
-                    player.setSpeed(playerSpeed);
+                    player.setYSpeed(playerSpeed);
                     player.setRotate(30);
-                    System.out.println(player.getY());
                 }
                 if (event.getCode().equals(KeyCode.UP) || event.getCode().equals(KeyCode.W)) {
-                    player.setSpeed(playerSpeed * (-1));
+                    player.setYSpeed(playerSpeed * (-1));
                     player.setRotate(10);
-                    System.out.println(player.getY());
                 }
                 if (event.getCode() == KeyCode.SPACE) {
                     player.setRotate(10);
-                    player.setSpeed(-5);
+                    player.setYSpeed(-5);
                 }
                 if (event.getCode().equals(KeyCode.Q)) {
                     try {
@@ -222,9 +221,9 @@ public class Controller extends Application {
                     noclip = !noclip;
                 }
                 if (event.getCode().equals(KeyCode.H)) {
-                    player.getSrc().setStroke(Color.CYAN);
-                    topRect.getSrc().setStroke(Color.CYAN);
-                    botRect.getSrc().setStroke(Color.CYAN);
+                    player.getSrc().setStroke(Color.AQUA);
+                    topRect.getSrc().setStroke(Color.AQUA);
+                    botRect.getSrc().setStroke(Color.AQUA);
                     for (Actor barrierList : barriers) {
                         barrierList.getSrc().setStroke(Color.CYAN);
                     }
@@ -234,10 +233,10 @@ public class Controller extends Application {
         gameScene.setOnKeyReleased(new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent event) {
-                player.setSpeed(0);
+                player.setYSpeed(0);
                 player.setRotate(20);
                 if (event.getCode().equals(KeyCode.SPACE)) {
-                    player.setSpeed(5);
+                    player.setYSpeed(5);
                 }
             }
         });
@@ -245,7 +244,7 @@ public class Controller extends Application {
 
     public void moveBarriers() {
         for (Actor barrierList : barriers) {
-            barrierList.moveX(barrierList.getSpeed());
+            barrierList.moveX(barrierList.getXSpeed());
         }
     }
 

@@ -10,6 +10,7 @@ import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 
 import java.io.IOException;
+import java.util.Random;
 
 /**
  * MainGame.Copter
@@ -17,13 +18,19 @@ import java.io.IOException;
  */
 class GameLoop extends AnimationTimer {
     private Controller controller;
+    private Random rand;
 
     public GameLoop(Controller controller) {
         this.controller = controller;
+        rand = new Random();
     }
 
     @Override
     public void handle(long now) {
+        Color[] fire = new Color[]{
+                Color.RED,
+                Color.YELLOW,
+                Color.ORANGE};
         int i = 0;
         controller.trail.add(i, new Actor());
         controller.trail.get(i).setSrc(new Rectangle());
@@ -32,15 +39,21 @@ class GameLoop extends AnimationTimer {
                 controller.player.getImageY() + (controller.rand.nextInt(10 - 5) + 5),
                 3,
                 3);
-        controller.trail.get(i).setFill(Color.WHITESMOKE);
+        controller.trail.get(i).setFill(Color.BLUE);
         controller.trail.get(i).setXSpeed(controller.rand.nextInt((-1) - (-5)) + (-5));
         controller.trail.get(i).setYSpeed(controller.rand.nextInt(1 - (-1)) + (-1));
         controller.gameLayout.getChildren().add(controller.trail.get(i).getSrc());
 
         for (Actor trails : controller.trail) {
+            if (trails.getX() < controller.player.getX() - 1) {
+                trails.setFill(fire[rand.nextInt(fire.length)]);
+            }
+            if (trails.getX() < controller.player.getX() - (rand.nextInt(25 - 5) + 5)) {
+                trails.setFill(Color.WHITESMOKE);
+            }
             if (trails.getX() < 0) {
                 controller.gameLayout.getChildren().remove(trails.getSrc());
-                trails.setSpeed(0);
+                trails.setXSpeed(0);
             } else {
                 trails.move(
                         trails.getXSpeed(),
@@ -49,7 +62,7 @@ class GameLoop extends AnimationTimer {
         }
 
         checkCollision();
-        controller.player.moveY(controller.player.getSpeed());
+        controller.player.moveY(controller.player.getYSpeed());
         controller.handleInput();
         controller.moveBarriers();
         controller.score();
@@ -64,7 +77,7 @@ class GameLoop extends AnimationTimer {
                 }
                 if (barrierList.getX() + barrierList.getWidth() < 0) {
                     controller.gameLayout.getChildren().remove(barrierList.getSrc());
-                    barrierList.setSpeed(0);
+                    barrierList.setXSpeed(0);
                 }
             }
 
