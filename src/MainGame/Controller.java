@@ -1,14 +1,12 @@
 package MainGame;
 
 import javafx.application.Application;
-import javafx.event.EventHandler;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -20,7 +18,10 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+import java.util.Scanner;
 
 /**
  * MainGame.Copter
@@ -63,7 +64,7 @@ public class Controller extends Application {
         barrierSpeed = -10;
         nBarriers = 200;
         barrierGap = 400;
-        highScore = new File("src\\res\\high_score.hs");
+        highScore = new File("src\\res\\high_score.txt");
         hsText = new Text();
     }
 
@@ -192,49 +193,43 @@ public class Controller extends Application {
     }
 
     public void handleInput() {
-        gameScene.setOnKeyPressed(new EventHandler<KeyEvent>() {
-            @Override
-            public void handle(KeyEvent event) {
-                /*if (event.getCode().equals(KeyCode.DOWN) || event.getCode().equals(KeyCode.S)) {
-                    player.setYSpeed(playerSpeed);
-                    player.setRotate(30);
+        gameScene.setOnKeyPressed(event -> {
+            /*if (event.getCode().equals(KeyCode.DOWN) || event.getCode().equals(KeyCode.S)) {
+                player.setYSpeed(playerSpeed);
+                player.setRotate(30);
+            }
+            if (event.getCode().equals(KeyCode.UP) || event.getCode().equals(KeyCode.W)) {
+                player.setYSpeed(playerSpeed * (-1));
+                player.setRotate(10);
+            }*/
+            if (event.getCode() == KeyCode.SPACE) {
+                player.setRotate(10);
+                player.setYSpeed(-5);
+            }
+            if (event.getCode().equals(KeyCode.Q)) {
+                try {
+                    gameStop();
+                } catch (IOException e) {
+                    e.printStackTrace();
                 }
-                if (event.getCode().equals(KeyCode.UP) || event.getCode().equals(KeyCode.W)) {
-                    player.setYSpeed(playerSpeed * (-1));
-                    player.setRotate(10);
-                }*/
-                if (event.getCode() == KeyCode.SPACE) {
-                    player.setRotate(10);
-                    player.setYSpeed(-5);
-                }
-                if (event.getCode().equals(KeyCode.Q)) {
-                    try {
-                        gameStop();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-                if (event.getCode().equals(KeyCode.J)) {
-                    noclip = !noclip;
-                }
-                if (event.getCode().equals(KeyCode.H)) {
-                    player.getSrc().setStroke(Color.AQUA);
-                    topRect.getSrc().setStroke(Color.AQUA);
-                    botRect.getSrc().setStroke(Color.AQUA);
-                    for (Actor barrierList : barriers) {
-                        barrierList.getSrc().setStroke(Color.CYAN);
-                    }
+            }
+            if (event.getCode().equals(KeyCode.J)) {
+                noclip = !noclip;
+            }
+            if (event.getCode().equals(KeyCode.H)) {
+                player.getSrc().setStroke(Color.AQUA);
+                topRect.getSrc().setStroke(Color.AQUA);
+                botRect.getSrc().setStroke(Color.AQUA);
+                for (Actor barrierList : barriers) {
+                    barrierList.getSrc().setStroke(Color.CYAN);
                 }
             }
         });
-        gameScene.setOnKeyReleased(new EventHandler<KeyEvent>() {
-            @Override
-            public void handle(KeyEvent event) {
-                player.setYSpeed(0);
-                player.setRotate(20);
-                if (event.getCode().equals(KeyCode.SPACE)) {
-                    player.setYSpeed(5);
-                }
+        gameScene.setOnKeyReleased(event -> {
+            player.setYSpeed(0);
+            player.setRotate(20);
+            if (event.getCode().equals(KeyCode.SPACE)) {
+                player.setYSpeed(5);
             }
         });
     }
