@@ -26,7 +26,6 @@ import java.util.*;
  * MainGame.Copter
  * Created by Dan on 2/24/2016.
  */
-
 public class Controller extends Application {
 
     Random rand;
@@ -56,8 +55,6 @@ public class Controller extends Application {
 
     public GameLoop tick = new GameLoop(this);
 
-    // TODO Make barriers save to, read from a file.
-
     public Controller() {
         noclip = false;
         rand = new Random();
@@ -66,7 +63,7 @@ public class Controller extends Application {
         barrierSpeed = -10;
         nBarriers = 200;
         barrierGap = 400;
-        highScore = new File("src\\res\\high_score.txt");
+        highScore = new File("src\\res\\high_score.hs");
         hsText = new Text();
     }
 
@@ -198,14 +195,14 @@ public class Controller extends Application {
         gameScene.setOnKeyPressed(new EventHandler<KeyEvent>() {
             @Override
             public void handle(KeyEvent event) {
-                if (event.getCode().equals(KeyCode.DOWN) || event.getCode().equals(KeyCode.S)) {
+                /*if (event.getCode().equals(KeyCode.DOWN) || event.getCode().equals(KeyCode.S)) {
                     player.setYSpeed(playerSpeed);
                     player.setRotate(30);
                 }
                 if (event.getCode().equals(KeyCode.UP) || event.getCode().equals(KeyCode.W)) {
                     player.setYSpeed(playerSpeed * (-1));
                     player.setRotate(10);
-                }
+                }*/
                 if (event.getCode() == KeyCode.SPACE) {
                     player.setRotate(10);
                     player.setYSpeed(-5);
@@ -217,7 +214,7 @@ public class Controller extends Application {
                         e.printStackTrace();
                     }
                 }
-                if (event.getCode().equals(KeyCode.N)) {
+                if (event.getCode().equals(KeyCode.J)) {
                     noclip = !noclip;
                 }
                 if (event.getCode().equals(KeyCode.H)) {
