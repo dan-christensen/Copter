@@ -33,7 +33,7 @@ public class Controller extends Application {
 
     public Group gameLayout;
     private VBox menuLayout;
-    public Scene gameScene;
+    private Scene gameScene;
     private Scene menuScene;
     public Actor player;
     private int playerSpeed;
@@ -49,7 +49,7 @@ public class Controller extends Application {
     public List<Actor> trail;
     public boolean noclip;
 
-    public int score = 0;
+    private int score = 0;
     private int scoreAdder = 0;
     private File highScore;
     private int hs;
@@ -172,8 +172,8 @@ public class Controller extends Application {
         for (Actor trails : trail) {
             gameLayout.getChildren().remove(trails.getSrc());
         }
-        handleHighScore();
         score = 0;
+        handleHighScore();
         this.primaryStage.setScene(menuScene);
     }
 
